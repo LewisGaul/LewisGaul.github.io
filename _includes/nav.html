@@ -1,0 +1,10 @@
+{% if page.url == "/" %}
+{% assign isHomePage = true %}
+{% endif %}
+
+<div class="menu">
+	<a class="menuhome {% if isHomePage == true %}selected{% endif %}" href="/">&nbsp;</a>
+	{% for nav in site.nav %}
+	  <a href="{{ nav.href }}" class="menubutton {% if page.url contains nav.href %}selected{% endif %}">{{ nav.name }}</a>
+	{% endfor %}
+</div>
