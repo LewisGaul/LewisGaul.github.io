@@ -1,11 +1,11 @@
 title: Lewis Gaul's website
-baseurl: https://lewisgaul.github.io
+baseurl: "https://lewisgaul.github.io"
 
 # Navigation
 nav:
-  - href: LanguageComparison
+  - href: "/LanguageComparison"
 
-include: [_pages]
+include: ['_pages']
 
 
 markdown: kramdown
