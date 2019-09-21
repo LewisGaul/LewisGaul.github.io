@@ -6,8 +6,10 @@ baseurl: ""
 nav:
   - name: "Home"
     href: "/"
-  - name: "Language Comparison"
-    href: "https://lewisgaul.github.io/LanguageComparison"
+  - name: "Artwork site"
+    href: "https://lewisgaul.github.io/artwork-site"
+#  - name: "Language Comparison"
+#    href: "https://lewisgaul.github.io/LanguageComparison"
 
 include: ['_pages']
 
