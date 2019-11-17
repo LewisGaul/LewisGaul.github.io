@@ -4,12 +4,14 @@ baseurl: ""
 
 # Navigation
 nav:
-  - name: "Home"
-    href: "/"
-  - name: "Artwork site"
-    href: "https://lewisgaul.github.io/artwork-site"
-#  - name: "Language Comparison"
-#    href: "https://lewisgaul.github.io/LanguageComparison"
+  - name: Home
+    href: /
+  - name: EnHackathon blog
+    href: https://enhackathon.github.io
+  - name: Artwork site
+    href: https://lewisgaul.github.io/artwork-site
+#  - name: Language Comparison
+#    href: https://lewisgaul.github.io/LanguageComparison
 
 include: ['_pages']
 
