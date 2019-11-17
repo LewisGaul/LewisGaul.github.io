@@ -1,5 +1,5 @@
-title: Lewis Gaul's website
-url: "https://lewisgaul.github.io"
+title: Lewis Gaul's Homepage
+#url: "https://lewisgaul.github.io"
 baseurl: ""
 
 # Navigation
@@ -12,8 +12,5 @@ nav:
     href: https://lewisgaul.github.io/artwork-site
 #  - name: Language Comparison
 #    href: https://lewisgaul.github.io/LanguageComparison
-
-include: ['_pages']
-
 
 markdown: kramdown
