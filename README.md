@@ -1,3 +1,3 @@
 # My Personal Homepage
 
-[www.lewisgaul.co.uk](www.lewisgaul.co.uk)
+[https://www.lewisgaul.co.uk](lewisgaul.co.uk)
