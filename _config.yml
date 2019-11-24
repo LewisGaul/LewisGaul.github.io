@@ -6,7 +6,9 @@ baseurl: ""
 nav:
   - name: Home
     href: /
-  - name: EnHackathon blog
+  - name: CV
+    href: /cv.html
+  - name: EnHackathon
     href: https://enhackathon.github.io
   - name: Artwork site
     href: https://lewisgaul.github.io/artwork-site
