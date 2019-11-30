@@ -27,7 +27,7 @@ layout: cv
 - I set up and ran [EnHackathon](https://enhackathon.github.io) in 2019.
 
 **C**
-- I was taught to program in C when I joined my job at Ensoft in 2018, and have worked on team with a codebase of primarily C code.
+- I was taught C when I joined Ensoft in 2018, and worked on a team owning a C codebase for almost a year.
 - Some of my contribution to CPython has involved reading and writing C code.
 
 **Java**
@@ -61,3 +61,15 @@ layout: cv
 - A levels: A* in Maths (only student sitting Maths A level at the time)
 - GCSEs: 7 A* grades including Mathematics and Triple Science, 4 A grades including Double English
 - Merit in Grade 6 Flute
+
+
+## Other Interests
+
+**Sports**  
+I'm a big tennis fan, and enjoy playing racket sports, especially tennis squash and table tennis. I also enjoy long cycle rides with friends in the warmer periods of the year!
+
+**Spanish**  
+I spent four and a half months in Spain between the end of my degree and starting working at Ensoft to improve my ability to communicate in Spanish.
+
+**WOMAD**  
+I have been going to [WOMAD festival](https://womad.co.uk/) on and off since I was a toddler, in recent years doing bar work in exchange for a free weekend ticket.
