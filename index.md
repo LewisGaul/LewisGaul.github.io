@@ -10,7 +10,7 @@ More content will be coming soon, in the meantime check out my subpages:
 [**CV**](./cv.html)  
 More about my academic/software background.
 
-[**MineGauler**](./minegauler.html)  
+[**Minegauler**](./minegauler.html)  
 My biggest personal project by far - an implementation of Minesweeper with many added features, written in Python.
 
 [**EnHackathon**](https://enhackathon.github.io)  

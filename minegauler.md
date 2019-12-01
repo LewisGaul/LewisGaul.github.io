@@ -1,9 +1,10 @@
 ---
-title: MineGauler
+title: Minegauler
 layout: default
 ---
 
-# MineGauler
+# Minegauler
+
 
 See the [GitHub repo](https://github.com/LewisGaul/minegauler), or [click here to download](https://raw.githubusercontent.com/LewisGaul/minegauler/master/releases/MineGauler1.2.2.zip) and try it out (for Windows or Linux).
 
