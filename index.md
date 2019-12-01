@@ -17,5 +17,5 @@ My biggest personal project by far - an implementation of Minesweeper with many 
 This is an initiative to encourage people to contribute to open source Python that I started at work. The link above contains blog posts documenting people's experiences as first-time contributors.  
 If you're interested in contributing to CPython but you're not sure where to get started I'd suggest first checking out [the devguide](https://devguide.python.org/). If you have questions or you get stuck take a look at [Where to get help](https://devguide.python.org/help/) - personally I'd recommend signing up to and sending an email on the [core-mentorship mailing list](https://mail.python.org/mailman3/lists/core-mentorship.python.org/).
 
-[**Artwork site**](https://lewisgaul.co.uk/artwork-site)  
+[**Artwork site**](https://lewisgaul.github.io/artwork-site)  
 An early work-in-progress of a website to be used as a portfolio of artwork (not for me!).
