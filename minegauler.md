@@ -6,7 +6,7 @@ layout: default
 # Minegauler
 
 
-See the [GitHub repo](https://github.com/LewisGaul/minegauler), or [click here to download](https://raw.githubusercontent.com/LewisGaul/minegauler/master/releases/MineGauler1.2.2.zip) and try it out (for Windows or Linux).
+See the [GitHub repo](https://github.com/LewisGaul/minegauler), or try it out by [downloading from here](https://github.com/LewisGaul/minegauler/releases).
 
 
 ### History
@@ -43,10 +43,15 @@ Eventually I found myself with less time and interest to keep up my previous rat
  - Rewrite in Python 3 and using PyQt5 rather than Tkinter
  - Pull apart some of my spaghetti code, with particular focus on separating the backend and frontend
 
-I'm currently trying my best to catch up to something resembling what I had in 2015 with respect to feature-set... But these days I have a fraction of the time I used to have! I have a number of new features I'd like to implement one day to try them out:
+At the end of 2019 I made a big push to getting the latest version up to scratch with the feature-set my 2015 version had, thanks to some encouragement from my brother! This all started by bringing back local highscores (this time using a SQLite database) - from there I added back in lots of the other features, and even added a server side as a first move towards online highscores! Online highscores are currently available in a programmatic form at <http://minegauler.lewisgaul.co.uk/api/v1/highscores>. The main features I haven't yet reimplemented are board probabilities, custom number of lives, and custom 'detection' (how close mines have to be to a cell for the numbers to count them).
+
+By February 2020 I finally felt happy enough with the state of the project to do my first major release in years - [v4.0.4](https://github.com/LewisGaul/minegauler/releases/tag/v4.0.4)! There are still some bugs to iron out, but I think things are in a good place. The state of the project is also much better tracked these days using the GitHub repo (e.g. [issues](https://github.com/LewisGaul/minegauler/issues), [changelog](https://github.com/LewisGaul/minegauler/blob/master/CHANGELOG.md), [code coverage](https://codecov.io/gh/LewisGaul/minegauler/)...).
+
+These days I have a fraction of the time that I had over the holidays while I was at university, so progress is generally slower! I have a number of new features I'd like to implement one day to try them out:
  - Have right-clicks split a cell into 4 rather than flagging the cell (the board would initially have 4 times fewer cells than normal)
  - Rules randomiser, e.g. numbers '1' and '2' are swapped - the aim is to work out which rules have changed in as few losses as possible
  - Playing against the computer (set it to go at a certain speed and play in a separate window)
+ - Competing against other players by being presented with the same boards
  - Infinite board and infinite lives - get scored on your overall speed and number of lives lost in a time period
 
 
