@@ -19,7 +19,7 @@ layout: cv
 **Python**
 - I was introduced to Python in 2008 at the age of 13, and started playing around with problems on [Project Euler](https://projecteuler.net) while I was studying for A levels.
 - Throughout university I continued to practise using more complex Python techniques for various personal projects.
-- My biggest personal project has been implementing an advanced version of the classic Minesweeper game (see [the GitHub repo](https://github.com/LewisGaul/minegauler/tree/v4/dev)).
+- My biggest personal project has been implementing an advanced version of the classic Minesweeper game (see [the GitHub repo](https://github.com/LewisGaul/minegauler)).
 - I gave a 20-minute talk about my Minesweeper project at the Oxford science and technology conference *Inscite* in 2016.
 - I taught an 8-week Python beginner's course to university students in 2017.
 - I regularly use Python in my current job at Cisco.
