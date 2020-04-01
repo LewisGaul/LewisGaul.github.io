@@ -22,7 +22,7 @@ How would you rank the top 5 fastest programming languages? Perhaps some of the 
  - Go - a relatively new language (introduced in 2009) flaunting a new concurrency model
  - Rust - one year younger than Go, with a focus on performance and safety
  - Haskell - a well-known, popular functional language
- 
+
 I haven't given much thought to extending Python with Java, Go or Haskell. I hadn't written any Rust before, but with comparable performance to C and all the shiny new charactistics and features of a modern language, it seemed worth exploring...
 
 
@@ -34,6 +34,7 @@ So we want to write a Python extension in Rust to optimise the performance criti
 ### What Language Can Python Speak?
 
 As we know, Python has known how to talk to C for a long time in a variety of ways:
+
  - Write a dedicated [Python extension in C](https://docs.python.org/3/extending/extending.html) using the CPython C API.
  - Use [ctypes](https://docs.python.org/3/library/ctypes.html) - a stdlib module providing a mechanism to interact with C libraries and call C functions.
  - Use [cython](https://cython.org/) - a hybrid of C and Python, compiling to C code.
@@ -212,7 +213,7 @@ The rest of the file is the implementation of the `calc_pi()` API function. Ther
  * `pub` - 'public', expose this function
  * `unsafe` - this code is unsafe because it's a C API!
  * `extern "C"` - expose as a C API
- 
+
 Also note the choice to minimise the code in the unsafe function - putting as much code as possible in regular Rust functions maximises the checks the Rust compiler can perform for you.
 
 
@@ -248,3 +249,7 @@ print("Calculated pi to 2 decimal places:", pi)
 
 
 ## Conclusion
+
+Once you have all this boilerplate in place, it seems this setup could provide a convenient way to replace bits of Python code with a much faster alternative implemntation, while still providing safety guarantees in the heart of the logic.
+
+I'd be interested to hear any thoughts if anyone tries it out, and may create a follow-up post if I take it any further!
