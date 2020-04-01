@@ -5,9 +5,9 @@ categories: [coding]
 tags: [python, rust]
 ---
 
-People think Python is slow. In actual fact, if you compare to other popular programming languages, it's true! What some people don't understand, is the difference between *relative speed* and *being fast enough*.
+People think Python is slow. In actual fact, if you compare to other popular programming languages... it's true! What some people don't understand, is the difference between *relative speed* and *being fast enough*.
 
-If there's a genuine reason to want your code to go faster, some of the options available include: improving the Python code, rewriting in a different language, or just writing an extension in another language to optimise the slow bit. Let's explore this third option - it allows writing most of the code in Python while still giving huge room for improvement in performance critical parts.
+If there's a genuine reason to want your code to go faster, some of the options available include: improving the Python code, rewriting in a different language, or just writing an extension in another language to optimise the slow bit. Let's explore this third option - it allows writing most of the code in Python while still giving huge room for improvement in performance-critical parts.
 
 
 ## Anyone Know A Good Fast Language?
@@ -21,7 +21,7 @@ How would you rank the top 5 fastest programming languages? Perhaps some of the 
  - Java - better for long-running processes since it uses JIT compilation; requires the JVM
  - Go - a relatively new language (introduced in 2009) flaunting a new concurrency model
  - Rust - one year younger than Go, with a focus on performance and safety
- - Haskell - a well-known, popular functional language
+ - Haskell - if functional programming is your thing
 
 I haven't given much thought to extending Python with Java, Go or Haskell. I hadn't written any Rust before, but with comparable performance to C and all the shiny new charactistics and features of a modern language, it seemed worth exploring...
 
@@ -67,7 +67,7 @@ In this post I'll use a simple toy example - an extension of this example with s
 
 Given the purpose of this exercise is to pick out a piece of logic and make it fast, it makes sense to start by defining the API and giving some thought to the details of its responsibility.
 
-Let's start with a basic example:
+I'll be using this basic example:
 
 ```c
 // filename: api.h
@@ -99,7 +99,7 @@ rust-example/
 
 Once you've filled in the files as explained below, you should be able to simply run `cargo build` and wait to see "Finished"! You should find a `target/` directory is created in `rust-example/`, where you should find:
 
- * `target/debug/libpi.so` - The C library!
+ * `target/debug/libpi.so` - The built C library!
  * `target/debug/build/example-pi-<checksum>/out/bindings.rs` - The generated Rust bindings module, which may be of interest.
 
 
