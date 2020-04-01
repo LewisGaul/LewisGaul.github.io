@@ -7,11 +7,14 @@ layout: default
 
 More content will be coming soon, in the meantime check out my subpages:
 
-[**CV**](./cv.html)  
+[**CV**](./cv/)  
 More about my academic/software background.
 
-[**Minegauler**](./minegauler)  
+[**Minegauler**](./minegauler/)  
 My biggest personal project by far - an implementation of Minesweeper with many added features, written in Python.
+
+[**Blog**](./blog/)  
+Early days of a blog, just a place to make some notes about coding for now!
 
 [**EnHackathon**](https://enhackathon.github.io)  
 This is an initiative to encourage people to contribute to open source Python that I started at work. The link above contains blog posts documenting people's experiences as first-time contributors.  

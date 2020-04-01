@@ -1,15 +1,21 @@
 title: Lewis Gaul's Homepage
-#url: "https://lewisgaul.github.io"
 baseurl: ""
+
+markdown: kramdown
+kramdown:
+  input: GFM  # Github-Flavoured Markdown
+  syntax_highlighter: rouge
 
 # Navigation
 nav:
   - name: Home
     href: /
   - name: CV
-    href: /cv.html
+    href: /cv/
   - name: Minegauler
-    href: /minegauler
+    href: /minegauler/
+  - name: Blog
+    href: /blog/
   - name: EnHackathon
     href: https://enhackathon.github.io
   - name: Artwork site
@@ -17,4 +23,7 @@ nav:
 #  - name: Language Comparison
 #    href: https://lewisgaul.github.io/LanguageComparison
 
-markdown: kramdown
+collections:
+  posts:
+    output: true
+    permalink: /blog/:categories/:year/:month/:day/:title/
