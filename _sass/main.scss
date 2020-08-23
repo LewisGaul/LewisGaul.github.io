@@ -1,3 +1,10 @@
+/*
+ * This is a partial and must be imported by a file in css/.
+ * It is processed only by sass and not by Jekyll, and has no corresponding
+ * output file in the built site.
+ */
+
+
 /* Base styling */
 
 body {
@@ -97,13 +104,13 @@ footer p {
   width: 30px;
 }
 .email a {
-  background-image: url("/img/email.png");
+  background-image: url("/assets/img/email.png");
 }
 .gh a {
-  background-image: url("/img/gh.png");
+  background-image: url("/assets/img/gh.png");
 }
 .in a {
-  background-image: url("/img/in.png");
+  background-image: url("/assets/img/in.png");
 }
 
 

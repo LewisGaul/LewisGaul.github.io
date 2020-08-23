@@ -1,10 +1,13 @@
 title: Lewis Gaul - Homepage
 baseurl: ""
+comments_locked: false
 
 markdown: kramdown
 kramdown:
   input: GFM  # Github-Flavoured Markdown
   syntax_highlighter: rouge
+
+plugins: [jekyll-seo-tag]
 
 # Navigation
 nav:

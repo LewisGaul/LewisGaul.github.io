@@ -1,0 +1,351 @@
+/*
+ * This is a partial and must be imported by a file in css/.
+ * It is processed only by sass and not by Jekyll, and has no corresponding
+ * output file in the built site.
+ */
+
+
+/* Comments */
+
+label {
+  margin-top: 0;
+  margin-bottom: .725rem;
+}
+
+input,label,textarea {
+  display: block;
+  width: 100%
+}
+
+input,textarea {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0;
+  padding: .75em .5em;
+  vertical-align: top;
+  overflow: visible;
+  font-family: Helvetica,Arial,sans-serif;
+  background: #f2f2f2;
+  border: 1px solid #f2f2f2;
+  border-radius: .25em;
+  -webkit-appearance: none
+}
+
+.form__group {
+  display:-webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  margin: 0 -.5em 1em
+}
+
+.form__group > * {
+  padding-left: .5em;
+  padding-right: .5em
+}
+
+.form__group.g-recaptcha > * {
+  margin-left: .5em;
+  padding: 0
+}
+
+.btn,[type=submit] {
+  background: #AF0011;
+  background: -moz-linear-gradient(top, #AF0011 0%, #820011 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f8f8f8), color-stop(100%, #dddddd));
+  background: -webkit-linear-gradient(top, #AF0011 0%, #820011 100%);
+  background: -o-linear-gradient(top, #AF0011 0%, #820011 100%);
+  background: -ms-linear-gradient(top, #AF0011 0%, #820011 100%);
+  background: linear-gradient(to top, #AF0011 0%, #820011 100%);
+  border-radius: 4px;
+  border: none;
+  -webkit-box-shadow: inset 0px 1px 1px 0 #e90226;
+  box-shadow: inset 0px 1px 1px 0 #e90226;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  line-height: 1.5;
+  padding: .5em 1em;
+  text-align: center;
+  text-decoration: none
+}
+
+.btn:hover,[type=submit]:hover {
+  background: #C3001D;
+  background: -moz-linear-gradient(top, #C3001D 0%, #950119 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f8f8f8), color-stop(100%, #dddddd));
+  background: -webkit-linear-gradient(top, #C3001D 0%, #950119 100%);
+  background: -o-linear-gradient(top, #C3001D 0%, #950119 100%);
+  background: -ms-linear-gradient(top, #C3001D 0%, #950119 100%);
+  background: linear-gradient(to top, #C3001D 0%, #950119 100%);
+  color: #fff;
+  text-decoration: none
+}
+
+.btn:visited,[type=submit]:visited {
+  color: #fff
+}
+
+.btn:active,[type=submit]:active {
+  -webkit-transform: scale(.95);
+  transform: scale(.95)
+}
+
+.comment {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex
+}
+
+.comment+.comment {
+  margin-top: 2em
+}
+
+.comment.child {
+  margin-left: 40px
+}
+
+@media (min-width: 48em) {
+  .comment.child {
+      margin-left:80px
+  }
+}
+
+.comment__avatar {
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  margin-right: 10px;
+  width: 30px;
+  height: 30px;
+  padding: 5px;
+  border: 1px solid #ccc;
+}
+
+@media (min-width: 48em) {
+  .comment__avatar {
+      margin-right:20px;
+      width: 60px;
+      height: 60px
+  }
+}
+
+.comment__avatar img {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+
+@media (min-width: 48em) {
+  .comment__avatar img {
+      width:60px;
+      height: 60px
+  }
+}
+
+.no-js img.lazyload {
+  display: none
+}
+
+.lazyload,.lazyloading {
+  opacity: 0
+}
+
+.lazyloaded {
+  opacity: 1;
+  -webkit-transition: opacity .3s;
+  transition: opacity .3s
+}
+
+.comment__main {
+  min-width: calc(100% - 40px)
+}
+
+@media (min-width: 48em) {
+  .comment__main {
+      min-width:calc(100% - 80px)
+  }
+}
+
+.comment__meta {
+  margin-bottom: 1em;
+  padding-bottom: .25em;
+  border-bottom: 1px solid #ccc;
+}
+
+.comment__message {
+  font-size: .9em
+}
+
+.comment__message>:last-child {
+  margin-bottom: 0
+}
+
+.comment__message img {
+  max-width: 100%
+}
+
+.comment__reply {
+  margin-top: .5em;
+}
+
+.comment__form {
+  margin-bottom: 2.9rem
+}
+
+.comment__form .title {
+  margin-top: 2.9rem
+}
+
+#cancel-comment-reply-link {
+  float: right;
+}
+
+.notice {
+  padding: 4px 12px;
+  background: #FDFEFB;
+  border-radius: 4px;
+  border: 1px solid #D7D8C8;
+  margin-bottom: 32px;
+  -webkit-box-shadow: 0.25em 0.25em 0 #D7D8C8;
+  box-shadow: 0.25em 0.25em 0 #D7D8C8;
+}
+
+.notice.danger {
+  border-color: #b11313;
+  color: #b11313;
+  -webkit-box-shadow: 0.25em 0.25em 0 #b11313;
+  box-shadow: 0.25em 0.25em 0 #b11313;
+}
+
+.hidden {
+  display: none!important;
+  visibility: hidden!important;
+  opacity: 0;
+}
+
+h2 a, h3 a, h4 a {
+  visibility: hidden;
+  margin-left: 5px;
+  border: none;
+}
+
+#comments h2 a {
+  visibility: visible;
+}
+
+h3 a svg, h4 a svg {
+  height: 15px;
+  width: 15px;
+}
+
+h2 a:hover, h3 a:hover, h4 a:hover {
+  border: none;
+}
+
+h2 a:hover svg, h3 a:hover svg, h4 a:hover svg {
+  fill: #ab0611;
+}
+
+h2:hover a, h3:hover a, h4:hover a {
+  visibility: visible;
+}
+
+@media print, screen and (max-width: 960px) {
+
+  div.wrapper {
+    width:auto;
+    margin:0;
+  }
+
+  header, section, footer {
+    float:none;
+    position:static;
+    width:auto;
+  }
+
+  #stackoverflowflair {
+    position: static;
+    margin: 0;
+  }
+
+	footer {
+		border-top: 1px solid #ccc;
+		margin:0 84px 0 50px;
+		padding:0;
+	}
+
+  header {
+    padding-right:320px;
+  }
+
+  section {
+    padding:20px 84px 20px 50px;
+    margin:0 0 20px;
+  }
+
+  header a small {
+    display:inline;
+  }
+
+  header ul {
+    position:absolute;
+    right:130px;
+    top:84px;
+  }
+}
+
+@media print, screen and (max-width: 720px) {
+  body {
+    word-wrap:break-word;
+  }
+
+  header {
+    padding:10px 20px;
+		margin-right: 0;
+  }
+
+	section {
+    padding:10px 0 10px 20px;
+    margin:0 0 30px;
+  }
+
+	footer {
+		margin: 0 0 0 30px;
+	}
+
+  header ul, header p.view {
+    position:static;
+  }
+}
+
+@media print, screen and (max-width: 480px) {
+
+  header ul li.download {
+    display:none;
+  }
+
+	footer {
+		margin: 0 0 0 20px;
+	}
+
+	footer a{
+		display:block;
+	}
+
+}
+
+@media print {
+  body {
+    padding:0.4in;
+    font-size:12pt;
+    color:#444;
+  }
+}
