@@ -1,4 +1,4 @@
-title: Lewis Gaul's Homepage
+title: Lewis Gaul - Homepage
 baseurl: ""
 
 markdown: kramdown
@@ -20,8 +20,6 @@ nav:
     href: https://enhackathon.github.io
   - name: Artwork site
     href: https://lewisgaul.github.io/artwork-site
-#  - name: Language Comparison
-#    href: https://lewisgaul.github.io/LanguageComparison
 
 collections:
   posts:

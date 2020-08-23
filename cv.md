@@ -1,5 +1,5 @@
 ---
-title: CV of Lewis Gaul
+title: CV
 layout: cv
 ---
 
