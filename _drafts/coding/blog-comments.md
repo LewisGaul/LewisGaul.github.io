@@ -3,6 +3,7 @@ title: Adding Comments To The Blog
 layout: post
 categories: [coding]
 tags: [website, blog]
+comments: true
 ---
 
 Following instructions and example at:
