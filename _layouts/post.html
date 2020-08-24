@@ -6,6 +6,6 @@ layout: default
 
 {{ content }}
 
-{% if page.comments == true %}
+{% if page.comments != false %}
   {% include comments.html %}
 {% endif %}
