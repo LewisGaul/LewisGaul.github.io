@@ -98,6 +98,6 @@ comments:
 
   # reCaptcha
   reCaptcha:
-    enabled: true
+    enabled: false
     siteKey: "@@@"
     secret: "@@@"
