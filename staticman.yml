@@ -26,7 +26,7 @@ comments:
   # request.
   branch: "master"
 
-  commitMessage: "New comment by {fields.name}"
+  commitMessage: "New comment by {fields.name} on {options.slug}"
 
   # (*) REQUIRED
   #
