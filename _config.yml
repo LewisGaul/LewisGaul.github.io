@@ -1,4 +1,4 @@
-title: Lewis Gaul - Homepage
+title: Lewis Gaul
 baseurl: ""
 comments_locked: false
 
@@ -21,8 +21,8 @@ nav:
     href: /blog
   - name: EnHackathon
     href: https://enhackathon.github.io
-  - name: Artwork site
-    href: https://lewisgaul.github.io/artwork-site
+#  - name: Artwork site
+#    href: https://lewisgaul.github.io/artwork-site
 
 collections:
   posts:
