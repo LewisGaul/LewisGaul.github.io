@@ -6,16 +6,28 @@ layout: default
 <h1>Blog</h1>
 
 {% for category in site.categories %}
-<h3>{{ category[0] | capitalize }}</h3>
-<ul>
-  {% for post in category[1] %}
-  <li>
-    <p>
-      <a href="{{ post.url }}">{{ post.title }}</a> - ({{ post.date | date: "%Y-%m-%d" }})
-    </p>
-    <div class="excerpt">{{ post.excerpt }}</div>
-  </li>
-  {% endfor %}
-</ul>
-
+  {% if category[0] != "rough" %}
+    <h3>{{ category[0] | capitalize }}</h3>
+    <ul>
+      {% for post in category[1] %}
+        {% unless post.categories contains "rough" %}
+          {% include post-li.html %}
+        {% endunless %}
+      {% endfor %}
+    </ul>
+  {% endif %}
 {% endfor %}
+
+{% if site.categories contains "rough" %}
+  <h3>Rough</h3>
+  <p>
+    The following posts are in a rough state and are subject to change - they
+    may eventually move out of the 'rough' category. Feel free to add comments,
+    but if comments go out of date as the post is updated they may be deleted.
+  </p>
+  <ul>
+    {% for post in site.categories["rough"] %}
+      {% include post-li.html %}
+    {% endfor %}
+  </ul>
+{% endif %}
