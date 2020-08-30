@@ -1,8 +1,8 @@
 {% unless page.comments_locked == true or site.comments_locked == true %}
   <!-- Start comment form -->
   <div id="respond" class="comment__form">
-    <h2 class="title"><span id="comment-heading-text">Leave a comment</span> <button class="btn" id="cancel-comment-reply-link" style="display:none;">Cancel reply</button></h2>
-    <form id="comment-form" class="js-form" method="post" action="http://comments.lewisgaul.co.uk/v2/entry/LewisGaul/LewisGaul.github.io/master/comments">
+    <h2 class="title"><span id="comment-heading-text">Leave A Comment</span> <button class="btn" id="cancel-comment-reply-link" style="display:none;">Cancel reply</button></h2>
+    <form id="comment-form" class="js-form" method="post" action="https://comments.lewisgaul.co.uk/v2/entry/LewisGaul/LewisGaul.github.io/master/comments">
       <div class="form__group">
         <label for="comment-form-name">Name
           <input type="text" id="comment-form-name" name="fields[name]" required spellcheck="false" placeholder="Your name">
@@ -30,6 +30,5 @@
 {% else %}
   <div class="notice">
     <h4>Comments are currently closed</h4>
-    <!--<p>If you have a question concerning the content of this page, please feel free to <a href="/contact/">contact me</a>.</p>-->
   </div>
 {% endunless %}
