@@ -1,0 +1,12 @@
+_id: f0c37ef0-eadc-11ea-bcc1-011eea4ffab8
+_parent: f0c37ef0-eadc-11ea-bcc1-011eea4ffab8
+name: Lewis Gaul
+message: >-
+  Someone pointed out to me that the header file in [Defining the
+  API](https://www.lewisgaul.co.uk/blog/coding/2020/03/30/rust-python/#defining-the-api)
+  isn't actually used programmatically in my example. That's not to say it
+  serves no purpose (e.g. a C program wishing to implement the same API would be
+  expected to `#include` it), but it would be good to get Rust to somehow verify
+  that API functions are implemented with the correct signatures. If anyone has
+  any further thoughts on this please let me know!
+date: '2020-08-30T16:22:04.358Z'
