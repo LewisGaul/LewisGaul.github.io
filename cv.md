@@ -48,7 +48,7 @@ layout: cv
 **Industry interest**
 - I have a strong interest in programming languages and open source communities. Some examples:
   - I have been following development of the new programming language known as [*Jai*](https://github.com/BSVino/JaiPrimer/blob/master/JaiPrimer.md);
-  - I keep up to date with the latest features and discussions in the Python community;
+  - I keep up to date with the latest features and discussions in the Python and Elm communities;
   - I regularly watch videos of conference talks.
 
 
