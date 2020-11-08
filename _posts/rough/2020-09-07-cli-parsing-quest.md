@@ -6,13 +6,13 @@ tags: [python, cli, library]
 ---
 
 
-I've started a new project. As I think about directions this could go in I'm starting to think this could end up being a huge undertaking.
+I made a start to a new project. It could end up being a huge undertaking to take it as far as I'd like to, but the hope is that it could actually be useful to people!
 
-I'm aiming to simplify and enhance the solution to a problem that is regularly tackled by software engineers - defining CLIs (command-line interfaces). This could include anything from a regular command-line application to bots or interactive shells, although the focus (at least initially) is on the former.
+The aim is to simplify and enhance the solution to a problem that is regularly tackled by software engineers - defining CLIs (command-line interfaces). This could include anything from a regular command-line application to bots or interactive shells, although the focus (at least initially) is on the former.
 
 I have actually spent some time in this area a couple of times before - a bit on the concept of an interactive CLI back in 2018, and the [minegauler bot](https://github.com/LewisGaul/minegauler/blob/v4.0.5/server/bot/msgparse.py) in 2020. I've also been involved in implementing a CLI application at work (using Python's `argparse`).
 
-I feel like I've come up with a solid concept for a way to generically tackle the problem this time. However, when opting for a generic approach there can end up being a huge number of considerations and choices to make! One reason for writing this post is to help give me some focus on how to approach the project - the preference should be for an iterative approach, rather than having nothing to show until after months of development.
+I feel happy with the approach to generically tackle the problem this time. However, when opting for a generic approach there can end up being a huge number of considerations and choices to make! One reason for writing this post is to help give me some focus on how to approach the project - the preference should be for an iterative approach, rather than having nothing to show until after months of development.
 
 
 ## Project Fundamentals
@@ -37,3 +37,10 @@ Potential long-term goals:
  - May wish to support other static declaration formats (perhaps even eventually define a domain-specific language);
  - Provide validation and useful error messages for CLI declaration;
  - Should be non-specific to Python (provide APIs to other languages, e.g. bash).
+
+
+## Early Steps
+
+I created a [GitHub repository](https://github.com/LewisGaul/declarative-cli) and made a start on implementation - the master branch should be stable and the README gives some example usage in case anyone wants to try it out.
+
+The effort has stalled for now since I noticed a similar approach has already been used by the Rust library 'Clap' (see [here](https://github.com/clap-rs/clap#using-yaml)).
