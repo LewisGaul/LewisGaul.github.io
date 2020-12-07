@@ -1,6 +1,6 @@
 title: Lewis Gaul
 baseurl: ""
-comments_locked: false
+comments_locked: true
 
 markdown: kramdown
 kramdown:
