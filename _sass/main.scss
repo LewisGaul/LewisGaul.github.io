@@ -19,13 +19,15 @@ h1 {
 }
 
 /* code blocks */
-div.highlight {
+pre {
   background: #EEE;
   padding: 10px;
   border-radius: 5px;
 }
+
 pre.highlight {
   margin: 0;
+  overflow-x: auto;
 }
 
 
@@ -71,9 +73,12 @@ nav a:hover {
   color: #666;
 }
 
-pre.highlight {
-  overflow-x: auto;
+blockquote {
+  background-color: #EEE;
+  padding: 1px 20px;
+  border-radius: 5px;
 }
+
 
 /* Footer styling */
 
