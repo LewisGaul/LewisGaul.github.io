@@ -27,7 +27,10 @@ I'd recommend checking out the homepage: <https://ziglang.org/>, which lists the
 
 ## My Toy Project
 
-As a fun little project to try out the language, I decided to try reimplementing my first ever computer program! The purpose of the program is to find the *n*-ominoes for n = 1, 2, 3, ..., for example 'dominoes' are 2-ominoes and 'tetrominoes' (tetris shapes) are 4-ominoes. This is an interesting problem because it has a verifiable result, and performance matters (the number of ominoes grows exponentially with *n*). Originally it was Python 2, mostly written by my stepdad while I watched and absorbed as much as I could.
+As a fun little project to try out the language, I decided to try reimplementing my first ever computer program! The purpose of the program is to find the *n*-ominoes for n = 1, 2, 3, ..., for example 'dominoes' are 2-ominoes and 'tetrominoes' (tetris shapes) are 4-ominoes. To illustrate the intent, the five unique 4-ominoes are shown below:
+![4-ominoes](/assets/img/tetrominoes.png)
+
+This is an interesting problem because it has a verifiable result, and performance matters (the number of ominoes grows exponentially with *n*). Originally it was Python 2, mostly written by my stepdad while I watched and absorbed as much as I could.
 
 I ported the original code to Python 3 and uploaded to GitHub, which you can find at <https://github.com/LewisGaul/pyominoes>.
 
