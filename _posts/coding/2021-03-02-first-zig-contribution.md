@@ -20,7 +20,7 @@ My PR: <https://github.com/ziglang/zig/pull/8127>
 
 ## Setup
 
-I started with the [CONTRUBTING.md](https://github.com/ziglang/zig/blob/master/CONTRIBUTING.md) page, following the link under "Editing Source Code" to [Building Zig From Source](https://github.com/ziglang/zig/wiki/Building-Zig-From-Source). Surprisingly I'm now on my way to being 4/4 for following the contribution suggestions: start a project using Zig ([zigominoes](https://github.com/LewisGaul/zigominoes) and [zig-nestedtext](https://github.com/LewisGaul/zig-nestedtext)); spread the word (these blog posts, word of mouth); finding contributor friendly issues; editing source code.
+I started with the [CONTRIBUTING.md](https://github.com/ziglang/zig/blob/master/CONTRIBUTING.md) page, following the link under "Editing Source Code" to [Building Zig From Source](https://github.com/ziglang/zig/wiki/Building-Zig-From-Source). Surprisingly I'm now on my way to being 4/4 for following the contribution suggestions: start a project using Zig ([zigominoes](https://github.com/LewisGaul/zigominoes) and [zig-nestedtext](https://github.com/LewisGaul/zig-nestedtext)); spread the word (these blog posts, word of mouth); finding contributor friendly issues; editing source code.
 
 The main pain point I had was installing all required LLVM/Clang/LLD libraries - presumably it's difficult to give generic advice as this varies by OS? On Ubuntu20.04 I initially missed the apt packages `libclang-11-dev` and `liblld-11-dev`, although I'm not sure of the full minimal set of required dependencies.
 
