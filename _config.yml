@@ -13,16 +13,12 @@ plugins: [jekyll-seo-tag]
 nav:
   - name: Home
     href: /
-  - name: CV
-    href: /cv
-  - name: Minegauler
-    href: /minegauler
   - name: Blog
     href: /blog
+  - name: CV
+    href: /cv
   - name: EnHackathon
     href: https://enhackathon.github.io
-#  - name: Artwork site
-#    href: https://lewisgaul.github.io/artwork-site
 
 collections:
   posts:

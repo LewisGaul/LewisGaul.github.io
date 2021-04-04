@@ -11,7 +11,7 @@ layout: cv
 
 **Cisco Systems (formerly Ensoft)** (2018-present)
 - Software Engineer (joined as graduate)
-- Development in C, Python, Elm, Java
+- Development in C, Python, Elm, Bash, Java
 
 
 ## Software Experience
