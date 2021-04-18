@@ -1,5 +1,5 @@
 ---
-title: Zig NestedText library
+title: Zig NestedText Library
 layout: post
 categories: [coding]
 tags: [zig, open-source, parser, nestedtext]
