@@ -8,7 +8,7 @@ tags: [zig, open-source, parser, nestedtext]
 
 This post is going to be a little different to others I've written in that it's consciously aimed at those who may be interested in using NestedText, or users of Zig who are looking for a library for parsing a human-friendly data format.
 
-You can find the project at <https://github.com/LewisGaul/zig-nestedtext>.
+You can find my project at <https://github.com/LewisGaul/zig-nestedtext>.
 
 I've been playing around with Zig for a few months at this point, and this is my third blog post on the subject. You can find my previous posts at [Trying out Zig - Zigominoes](../../../01/10/trying-zig) and [First Contribution To Zig](../../../03/02/first-zig-contribution). Since writing the last post I have had a total of [6 PRs merged](https://github.com/ziglang/zig/pulls?q=is%3Apr+author%3ALewisGaul+is%3Amerged) into the Zig repo, all thanks to encouragement from the core team!
 
@@ -160,6 +160,39 @@ I have written a Zig implementation of a NestedText parser: [zig-nestedtext](htt
  - Use the CLI tool included in the project for converting between NestedText and JSON (it's pretty fast!)
 
 My implementation is based on the implementation of `std.json` - the JSON module in the Zig standard library. Working on this project led me to notice that the order of JSON objects is not maintained by `std.json`, and my suggestion to change this behaviour was accepted in [PR-8422](https://github.com/ziglang/zig/pull/8422).
+
+Examples of using the Zig API can be found in the [tests in `nestedtext.zig`](https://github.com/LewisGaul/zig-nestedtext/blob/f04419fc9335f77212c6cd4f3a611ed722da571f/src/nestedtext.zig#L571) and [the `cli.zig` implementation](https://github.com/LewisGaul/zig-nestedtext/blob/main/src/cli.zig). A snippet is given below.
+
+```zig
+const std = @import("std");
+const testing = std.testing;
+const Parser = @import("nestedtext").Parser;
+
+test "convert to JSON: list of strings" {
+    var p = Parser.init(testing.allocator, .{});
+
+    const s =
+        \\- single line
+        \\-
+        \\  > multi
+        \\  > line
+    ;
+
+    var tree = try p.parse(s);
+    defer tree.deinit();
+
+    var json_tree = try tree.root.toJson(testing.allocator);
+    defer json_tree.deinit();
+
+    var buffer: [128]u8 = undefined;
+    var fbs = std.io.fixedBufferStream(&buffer);
+    try json_tree.root.jsonStringify(.{}, fbs.outStream());
+    const expected_json =
+        \\["single line","multi\nline"]
+    ;
+    testing.expectEqualStrings(expected_json, fbs.getWritten());
+}
+```
 
 
 ## What's Next?
