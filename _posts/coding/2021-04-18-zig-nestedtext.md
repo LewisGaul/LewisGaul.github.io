@@ -197,9 +197,9 @@ test "convert to JSON: list of strings" {
 
 ## What's Next?
 
-The Zig JSON module has the ability to parse JSON directly into Zig structs - this is something I might look into adding for my NestedText parser that may be especially useful given this could handle parsing the string values to typed values, which would otherwise need to be done manually.
+The Zig JSON module has the ability to parse JSON directly into Zig structs - this is something I might look into adding for my NestedText parser. It may be especially useful for NestedText given this could handle parsing the string values to typed values, which would otherwise need to be done manually.
 
-There are also some ongoing discussions about the NestedText spec that I will continue to engage in, with the hope we can settle on something that won't need to change much more as people increasingly start to make use of it.
+There are also some ongoing discussions about the NestedText spec (linked above) that I will continue to engage in, with the hope we can settle on something that won't need to change much more as people increasingly start to make use of it.
 
 If anyone has any questions or suggestions for improvements feel free to get in touch, either via an [issue](https://github.com/LewisGaul/zig-nestedtext/issues/new) or [by email](mailto:lewis.gaul@gmail.com).
 
