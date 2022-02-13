@@ -15,8 +15,8 @@ nav:
     href: /
   - name: Blog
     href: /blog
-  - name: CV
-    href: /cv
+#  - name: CV
+#    href: /cv
   - name: EnHackathon
     href: https://enhackathon.github.io
 
