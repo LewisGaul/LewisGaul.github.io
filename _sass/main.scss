@@ -107,13 +107,13 @@ footer p {
 .social {
   float: right;
 }
-.email, .gh, .in {
+.email, .gh, .in .twitter {
   display: inline-block;
   height: 40px;
   width: 40px;
   text-align: center;
 }
-.email a, .gh a, .in a {
+.email a, .gh a, .in a, .twitter a {
   vertical-align: middle;
   cursor: pointer;
   display: inline-block;
@@ -131,6 +131,9 @@ footer p {
 }
 .in a {
   background-image: url("/assets/img/in.png");
+}
+.twitter a {
+  background-image: url("/assets/img/twitter.png");
 }
 
 
