@@ -5,7 +5,6 @@ categories: [rough, coding]
 tags: [python, cli, library]
 ---
 
-## Introduction
 
 I made a start to a new project. It could end up being a huge undertaking to take it as far as I'd like to, but the hope is that it could actually be useful to people!
 

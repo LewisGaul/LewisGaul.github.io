@@ -8,9 +8,7 @@ kramdown:
   syntax_highlighter: rouge
   auto_ids: true
 
-plugins:
-  - jekyll-seo-tag
-  - jekyll-toc
+plugins: [jekyll-seo-tag]
 
 # Navigation
 nav:
@@ -27,9 +25,3 @@ collections:
   posts:
     output: true
     permalink: /blog/:categories/:year/:month/:day/:title/
-
-defaults:
-  - scope:
-      path: ""
-    values:
-      toc: true
