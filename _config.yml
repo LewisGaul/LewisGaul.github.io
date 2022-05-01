@@ -7,7 +7,9 @@ kramdown:
   input: GFM  # Github-Flavoured Markdown
   syntax_highlighter: rouge
 
-plugins: [jekyll-seo-tag]
+plugins:
+  - jekyll-seo-tag
+  - jekyll-toc
 
 # Navigation
 nav:
@@ -24,3 +26,9 @@ collections:
   posts:
     output: true
     permalink: /blog/:categories/:year/:month/:day/:title/
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      toc: true
