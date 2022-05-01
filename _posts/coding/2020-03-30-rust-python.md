@@ -5,6 +5,8 @@ categories: [coding]
 tags: [python, rust]
 ---
 
+## Introduction
+
 People think Python is slow. In actual fact, if you compare to other popular programming languages... it's true! What some people don't understand, is the difference between *relative speed* and *being fast enough*.
 
 If there's a genuine reason to want your code to go faster, some of the options available include: improving the Python code, rewriting in a different language, or just writing an extension in another language to optimise the slow bit. Let's explore this third option - it allows writing most of the code in Python while still giving huge room for improvement in performance-critical parts.

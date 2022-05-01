@@ -5,6 +5,8 @@ categories: [coding]
 tags: [python, open-source]
 ---
 
+## Introduction
+
 I was very excited to receive an email from Eric inviting me to join the week-long [CPython sprint](https://python-core-sprint-2020.readthedocs.io/), which took place this week.
 
 This follows on from when I worked with Eric on the subinterpreters CPython project a year ago as part of EnHackathon - see my last EnHackathon [blog post](https://enhackathon.github.io/2019/12/11/LewisGaul.html) for context.

@@ -5,6 +5,8 @@ categories: [coding]
 tags: [python, minesweeper, gui]
 ---
 
+## Introduction
+
 See the [GitHub repo](https://github.com/LewisGaul/minegauler), or try it out by [downloading from here](https://github.com/LewisGaul/minegauler/releases).
 
 

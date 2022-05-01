@@ -5,6 +5,8 @@ categories: [coding]
 tags: [style, opinion]
 ---
 
+## Introduction
+
 All software engineers develop their own taste and style, and naturally people form differing opinions.
 I decided to write down some of my personal pet peeves so that I have a link to point to when these things come up in discussion/review!
 

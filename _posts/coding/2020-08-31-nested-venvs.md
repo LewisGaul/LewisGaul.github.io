@@ -5,6 +5,8 @@ categories: [coding]
 tags: [python, virtualenv, venv, tips]
 ---
 
+## Introduction
+
 This blog post is a by-product of my attempt to script virtual environment creation for one of my Python projects. My setup happened to fall into a case where `virtualenv` (3rd party) and `venv` (stdlib) do not play nicely together! In actual fact, I think I hit the same issue in the past without knowing what was going wrong. I did some digging and decided to write up my findings to help anyone hitting the same/similar issues.
 
 To start with, for anyone not familiar with the different virtual environment options, [this Stack Overflow answer](https://stackoverflow.com/a/41573588/5181656) provides a great summary. The focus in this post is on `virtualenv` and `venv`, which I would call the two most popular options.
