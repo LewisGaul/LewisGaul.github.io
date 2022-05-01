@@ -6,6 +6,7 @@ markdown: kramdown
 kramdown:
   input: GFM  # Github-Flavoured Markdown
   syntax_highlighter: rouge
+  auto_ids: true
 
 plugins:
   - jekyll-seo-tag
