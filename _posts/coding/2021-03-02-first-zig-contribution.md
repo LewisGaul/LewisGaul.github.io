@@ -5,8 +5,6 @@ categories: [coding]
 tags: [zig, open-source, language]
 ---
 
-## Introduction
-
 Recently one of the main things I've been intending to learn more about is the Zig programming language. I came across an issue tagged with 'contributor friendly' in the issue tracker that seemed approachable and decided I might as well try diving in!
 
 <img src="/assets/img/zig-mascot-zero.svg" id="zig-zero" alt="Zig mascot Zero the Ziguana" width="200" height="200" />

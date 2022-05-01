@@ -5,8 +5,6 @@ categories: [coding]
 tags: [zig, open-source, parser, nestedtext]
 ---
 
-## Introduction
-
 This post is going to be a little different to others I've written in that it's consciously aimed at those who may be interested in using NestedText, or users of Zig who are looking for a library for parsing a human-friendly data format.
 
 You can find my project at <https://github.com/LewisGaul/zig-nestedtext>.

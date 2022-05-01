@@ -5,8 +5,6 @@ categories: [coding]
 tags: [zig, language]
 ---
 
-## Introduction
-
 Over the last year or so I've been tempted to learn Rust as a more modern alternative to C or C++. I did have a go at learning it, but I found myself fighting with it more than I'd hoped. So I decided to try out Zig instead!
 
 

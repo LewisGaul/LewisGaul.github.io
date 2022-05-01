@@ -5,8 +5,6 @@ categories: [rough, coding]
 tags: [programming, language, design]
 ---
 
-## Introduction
-
 Have you ever used a language and thought "*I wish that worked slightly differently*", or "*I wish it had \<feature X\>*"?
 
 All languages have their quirks and warts, all languages are constrained by restrictive backward compatibility considerations, and all languages will have more appeal to certain people than others! There's no such thing as 'the right choice' when it comes to language design - there will always be trade-offs between performance, static checks, flexibility, complexity, ease-of-use, familiar style, novel ideas...

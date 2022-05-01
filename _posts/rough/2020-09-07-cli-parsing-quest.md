@@ -5,8 +5,6 @@ categories: [rough, coding]
 tags: [python, cli, library]
 ---
 
-## Introduction
-
 I made a start to a new project. It could end up being a huge undertaking to take it as far as I'd like to, but the hope is that it could actually be useful to people!
 
 The aim is to simplify and enhance the solution to a problem that is regularly tackled by software engineers - defining CLIs (command-line interfaces). This could include anything from a regular command-line application to bots or interactive shells, although the focus (at least initially) is on the former.
