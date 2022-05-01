@@ -15,6 +15,8 @@ This line from [the manpages](https://man7.org/linux/man-pages/man7/cgroups.7.ht
 
 > Control groups, usually referred to as cgroups, are a Linux kernel feature which allow processes to be organized into hierarchical groups whose usage of various types of resources can then be limited and monitored.
 
+This idea of 'hierarchical groups' corresponds to the fact that cgroups can have child cgroups, and certain properties are inherited from their parent (a bit like how Linux processes inherit some characteristics from their parents).
+
 The manual goes on to define some terminology:
 
 > The kernel's cgroup interface is provided through a pseudo-filesystem called *cgroupfs*.
