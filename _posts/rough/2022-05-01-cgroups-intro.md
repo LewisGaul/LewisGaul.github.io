@@ -26,6 +26,13 @@ The manual goes on to define some terminology:
 > A *subsystem* is a kernel component that modifies the behavior of the processes in a cgroup.
 > [...] Subsystems are sometimes also known as *resource controllers* (or simply, controllers).
 
+There are a number of supported controllers, some examples being:
+- 'memory' for controlling/monitoring memory usage
+- 'cpu' for controlling/monitoring CPU usage
+- 'cpuset' for controlling which CPUs may be used
+- 'pids' for controlling/monitoring the number of allowed child PIDs
+- 'devices' for controlling which devices may be created/accessed
+
 
 ### Cgroup versions
 
@@ -112,8 +119,8 @@ mount -n -t cgroup -o none,name=systemd cgroup /sys/fs/cgroup/systemd
 
 ### Cgroups v2
 
-Discussions around a reimplementation of cgroups was started as early as 2012, and cgroups v2 was released in kernel v4.5 (2016).
-Adoption is just starting to become more mainstream now in 2022 as more Linux distros switch the default to be v2.
+Discussions around a reimplementation of cgroups were started as early as 2012, and cgroups v2 was released in kernel v4.5 (2016).
+Adoption is just now starting to become more mainstream as more Linux distros switch the default to be v2.
 
 An explanation of the differences and motivations for cgroups v2 is [given in the manpages](https://man7.org/linux/man-pages/man7/cgroups.7.html#CGROUPS_VERSION_2).
 The reasoning is summarised as:
@@ -163,5 +170,14 @@ TODO
 
 
 ## Cgroups and Containers
+
+TODO
+
+
+## Manual Cgroup Manipulation
+
+TODO
+
+### Systemd cgroup ownership
 
 TODO
