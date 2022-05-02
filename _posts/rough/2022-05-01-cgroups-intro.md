@@ -31,7 +31,6 @@ There are a number of supported controllers, some examples being:
 - 'cpu' for controlling/monitoring CPU usage
 - 'cpuset' for controlling which CPUs may be used
 - 'pids' for controlling/monitoring the number of allowed child PIDs
-- 'devices' for controlling which devices may be created/accessed
 
 
 ### Cgroup versions
@@ -75,6 +74,8 @@ As an illustration of cgroups v2 adoption, here's the status of some popular Lin
 
 This section goes into some more detail about the main differences, how to check which version is in use, and how to switch between versions.
 
+There's a really good conference talk "Mixing cgroupfs v1 & cgroupfs v2: finding solutions for container runtimes" by Christian Brauner that I used to fill in some of the gaps (video available on YouTube).
+
 
 ### Cgroups v1
 
@@ -110,11 +111,15 @@ for sys in memory cpu,cpuacct cpuset pids hugetlb freezer perf_event net_cls,net
 done
 ```
 
-It is also possible to create arbitrary named subsystems (which aren't strictly speaking *controllers*) such as the one Systemd creates.
-This is relevant to a later section!
+It is also possible to create arbitrary named subsystems (which aren't strictly speaking *controllers*) such as the one Systemd creates for its internal tracking.
+This will become relevant in a later section!
 ```bash
 mount -n -t cgroup -o none,name=systemd cgroup /sys/fs/cgroup/systemd
 ```
+
+The list of enabled controllers can be checked by reading the `/proc/cgroups` file.
+
+Note that (apparently) it is actually possibly to mount multiple v1 cgroup controllers at the *same path*, such that they would share the same hierarchy.
 
 
 ### Cgroups v2
@@ -137,7 +142,7 @@ TARGET         SOURCE  FSTYPE  OPTIONS
 /sys/fs/cgroup cgroup2 cgroup2 rw,nosuid,nodev,noexec,relatime,nsdelegate,memory_recursiveprot
 ```
 
-The enabled controllers can be checked by reading the `/proc/cgroups` file, or the active controllers in a given cgroup using the `cgroup.controllers` file:
+The active controllers in a given cgroup using the `cgroup.controllers` file:
 ```
 root@ubuntu:~# cat /sys/fs/cgroup/cgroup.controllers
 cpuset cpu io memory hugetlb pids rdma misc
@@ -146,22 +151,95 @@ cpuset cpu io memory hugetlb pids rdma misc
 
 ### Differences between v1 and v2
 
-The differences are [explained in the manpages](https://man7.org/linux/man-pages/man7/cgroups.7.html#CGROUPS_VERSION_2) (as previously linked), but as a quick summary, v2 brings the following changes:
+The differences are explained in the [manpages](https://man7.org/linux/man-pages/man7/cgroups.7.html#CGROUPS_VERSION_2) (as previously linked) and the [kernel docs](https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html#deprecated-v1-core-features).
+
+As a quick summary, v2 brings the following changes:
 - A unified hierarchy (as shown above)
 - Processes may only be assigned to 'leaf nodes' in the hierarchy, i.e. cgroups that do not have their own child cgroups
+  - The intention here seems to be to make it more explicit/obvious how resources are shared out.
 - Active controllers must be specified via the `cgroup.controllers` and `cgroup.subtree_control` files inside the cgroup filesystem
 - All threads of a process must be inside the same cgroup (unless '[thread mode](https://man7.org/linux/man-pages/man7/cgroups.7.html#CGROUPS_VERSION_2_THREAD_MODE)' is enabled)
-- Some filename changes, e.g. `cpuset.effective_cpus` versus `cpuset.cpus.effective`
+  - For some controllers it doesn't make sense for different threads of the same process to be in different cgroups, most notably the 'memory' controller since threads of the same process share the same memory space. For others (e.g. 'cpu'/'cpuset') it can make sense.
+- Some filename changes, e.g. `cpuset.effective_cpus` changed to `cpuset.cpus.effective`
+- Certain controllers removed, e.g. 'devices', since this relates to *access* management rather than *resource* management
 
 
-### Hybrid mode
+### Hybrid mode and Systemd
 
-TODO
+[Disclaimer: The below reflects my understanding, which may contain inaccuracies. I'll include links to justify my claims where possible!]
+
+The Linux kernel simultaneously supports v1 and v2 cgroups.
+The restriction is detailed in the manpages:
+> A cgroup v2 controller is available only if it is not currently in use via a mount against a cgroup v1 hierarchy.
+> Or, to put things another way, it is not possible to employ the same controller against both a v1 hierarchy and the unified v2 hierarchy.
+
+What this means is that it's possible to have cgroup v1 mounts at the same time as having a cgroup v2 mount (recall that the mount point doesn't *have* to be `/sys/fs/cgroup`, so two different locations can be used).
+In theory it is possible to have some controllers managed by v1 and others managed by v2 (but not for the same controller to be managed by both at the same time).
+
+On systems that boot with Systemd (the majority of the most popular distros these days), it is Systemd that sets up the cgroup mounts.
+In the transition from cgroups v1 to v2, Systemd made a 'hybrid' mode the default before switching to v2 as the default.
+
+Taking a step back to take a look at Systemd's support for cgroups v2 (as per [the `NEWS` file](https://github.com/systemd/systemd/blob/main/NEWS)):
+- v226 (2015) adds provisional support for cgroups v2 via kernel command-line option `systemd.unified_cgroup_hierarchy=1`
+- v230 (2016) makes cgroups v2 support official with kernel version v4.5
+- v231 (2016) adds support for the 'memory' controller under cgroups v2
+- v232 (2016) adds support for the 'cpu' controller under cgroups v2
+- v233 (2017):
+  - the hybrid mode that Systemd uses by default is modified for better compatibility with v1
+  - adds ability to use full legacy mode via kernel command-line option `systemd.legacy_systemd_cgroup_controller=1`
+  - adds compile-time configure option `--with-default-hierarchy` that makes v2 the default, options are 'legacy', 'unified', or 'hybrid' (default)
+- v243 (2019) makes cgroups v2 the default
+- v244 (2019) adds support for the 'cpuset' controller under cgroups v2
+
+It's not made completely clear when the initial 'hybrid' mode was introduced and became the default, but I think it was v232.
+It's also not clear what this initial hybrid setup was, although I would think it was a v2 cgroup mount at `/sys/fs/cgroup/systemd` instead of the named v1 subsystem.
+
+It seems that perhaps hybrid was intended to act like an internal detail that users wouldn't need to care about while still using cgroups v1.
+However, clearly there were issues with compatibility [[relevant PR](https://github.com/systemd/systemd/pull/4628)], and v233 subsequently made changes to the hybrid mode that warranted a mention in the `NEWS` file, as well as adding options to force pure cgroups v1 mode.
+
+The 'fixed' hybrid mode introduced in v233 is set up with all controllers still using v1, but with there also being a v2 cgroup mount at `/sys/fs/cgroup/unified` that Systemd uses for its own internal tracking (instead of the v1 named subsystem).
+
+This looks something like this (note the second mount, of type `cgroup2`):
+```
+root@ubuntu:~# findmnt -R /sys/fs/cgroup
+TARGET                            SOURCE FSTYPE  OPTIONS
+/sys/fs/cgroup                    tmpfs  tmpfs   ro,nosuid,nodev,noexec,mode=755
+|-/sys/fs/cgroup/unified          cgroup cgroup2 rw,nosuid,nodev,noexec,relatime
+|-/sys/fs/cgroup/systemd          cgroup cgroup  rw,nosuid,nodev,noexec,relatime,xattr,release_agent=/lib/systemd/systemd-cgroups-agent,name=systemd
+|-/sys/fs/cgroup/pids             cgroup cgroup  rw,nosuid,nodev,noexec,relatime,pids
+|-/sys/fs/cgroup/cpu,cpuacct      cgroup cgroup  rw,nosuid,nodev,noexec,relatime,cpu,cpuacct
+|-/sys/fs/cgroup/devices          cgroup cgroup  rw,nosuid,nodev,noexec,relatime,devices
+|-/sys/fs/cgroup/net_cls,net_prio cgroup cgroup  rw,nosuid,nodev,noexec,relatime,net_cls,net_prio
+|-/sys/fs/cgroup/memory           cgroup cgroup  rw,nosuid,nodev,noexec,relatime,memory
+|-/sys/fs/cgroup/hugetlb          cgroup cgroup  rw,nosuid,nodev,noexec,relatime,hugetlb
+|-/sys/fs/cgroup/rdma             cgroup cgroup  rw,nosuid,nodev,noexec,relatime,rdma
+|-/sys/fs/cgroup/blkio            cgroup cgroup  rw,nosuid,nodev,noexec,relatime,blkio
+|-/sys/fs/cgroup/freezer          cgroup cgroup  rw,nosuid,nodev,noexec,relatime,freezer
+|-/sys/fs/cgroup/cpuset           cgroup cgroup  rw,nosuid,nodev,noexec,relatime,cpuset
+`-/sys/fs/cgroup/perf_event       cgroup cgroup  rw,nosuid,nodev,noexec,relatime,perf_event
+```
+
+If you check the contents of `/sys/fs/cgroup/unified/cgroup.controllers` you should see that there are no controllers enabled under cgroups v2.
+The named 'systemd' v1 subsystem is included for compatibility with v1, where I believe Systemd actually uses the v2 mount for its tracking in this hybrid mode.
+
+The different Systemd cgroup modes are discussed in [this email thread](https://lists.freedesktop.org/archives/systemd-devel/2017-November/039754.html) involving Lennart Poettering:
+> hybrid means that v2 is used only for tracking services (which is a
+good thing, since it provides safe notification of when a cgroup
+exits), but not for any of the controllers. That means hybrid mode is
+mostly compatible with pure v1, except that there's yet another
+hierarchy (the v2 one) and systemd uses it for its own purposes.
+
+The different modes are also described and explained at <https://systemd.io/CGROUP_DELEGATION/>.
+
+Finally, another point of interest is Lennart's comment in 2018 on [this issue](https://github.com/systemd/systemd/issues/10107#issuecomment-424028793):
+> Quite frankly at this point I think doing "hybrid" is a stopgap we should never have added... It blurs the road forward. People should either use full cgroupsv1 or full cgroupsv2 but anything in between is just a maintainance burden.
 
 
 ### Determining active cgroup mode
 
 TODO
+
+- `systemd --version` shows `default-hierarchy={legacy,hybrid,unified}`
 
 
 ### Switching cgroup mode
