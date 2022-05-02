@@ -81,6 +81,8 @@ There's a really good conference talk "Mixing cgroupfs v1 & cgroupfs v2: finding
 
 Cgroups v1, the original implementation of the new 'control cgroups' feature, was released in Linux kernel v2.6.24, 2008.
 
+As well as the manpages, another useful set of documentation is the [Linux kernel docs](https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v1/index.html).
+
 Under v1, the `/sys/fs/cgroup` mount is a `tmpfs` mount used to contain the per-subsystem `cgroup` type mounts.
 An example can be seen below:
 ```
@@ -135,6 +137,8 @@ application design.  In practice, though, the flexibility turned
 out to be less useful than expected, and in many cases added
 complexity.
 
+There are also [kernel docs for v2](https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html).
+
 Under v2, the `/sys/fs/cgroup` mount is a single `cgroup2` mount that is used to manage all enabled controllers.
 ```
 root@ubuntu:~# findmnt -R /sys/fs/cgroup
@@ -151,7 +155,7 @@ cpuset cpu io memory hugetlb pids rdma misc
 
 ### Differences between v1 and v2
 
-The differences are explained in the [manpages](https://man7.org/linux/man-pages/man7/cgroups.7.html#CGROUPS_VERSION_2) (as previously linked) and the [kernel docs](https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html#deprecated-v1-core-features).
+The differences are explained in the [manpages](https://man7.org/linux/man-pages/man7/cgroups.7.html#CGROUPS_VERSION_2) and the [kernel docs](https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html#deprecated-v1-core-features) (both previously linked).
 
 As a quick summary, v2 brings the following changes:
 - A unified hierarchy (as shown above)
@@ -194,7 +198,7 @@ Taking a step back to take a look at Systemd's support for cgroups v2 (as per [t
 It's not made completely clear when the initial 'hybrid' mode was introduced and became the default, but I think it was v232.
 It's also not clear what this initial hybrid setup was, although I would think it was a v2 cgroup mount at `/sys/fs/cgroup/systemd` instead of the named v1 subsystem.
 
-It seems that perhaps hybrid was intended to act like an internal detail that users wouldn't need to care about while still using cgroups v1.
+It seems that perhaps hybrid was intended to be an internal detail that users wouldn't need to care about while still using cgroups v1.
 However, clearly there were issues with compatibility [[relevant PR](https://github.com/systemd/systemd/pull/4628)], and v233 subsequently made changes to the hybrid mode that warranted a mention in the `NEWS` file, as well as adding options to force pure cgroups v1 mode.
 
 The 'fixed' hybrid mode introduced in v233 is set up with all controllers still using v1, but with there also being a v2 cgroup mount at `/sys/fs/cgroup/unified` that Systemd uses for its own internal tracking (instead of the v1 named subsystem).
@@ -235,16 +239,37 @@ Finally, another point of interest is Lennart's comment in 2018 on [this issue](
 > Quite frankly at this point I think doing "hybrid" is a stopgap we should never have added... It blurs the road forward. People should either use full cgroupsv1 or full cgroupsv2 but anything in between is just a maintainance burden.
 
 
-### Determining active cgroup mode
+### Determining the active cgroup mode
 
-TODO
+Hopefully the above makes it clear that determining which cgroup version is in use is not as simple as you might initially think!
 
-- `systemd --version` shows `default-hierarchy={legacy,hybrid,unified}`
+The main complication comes from the fact that different controllers can be enabled on different cgroup versions, plus there's no fixed path for the cgroup mount.
+In practice, though, it should generally be safe to assume the path is `/sys/fs/cgroup`, and in many cases Systemd will be in charge of setting up cgroups and all controllers will be enabled on one or the other of v1 or v2.
+
+The most robust way to check the cgroup version used by different controllers would seem to be by finding all mounts of type `cgroup` or `cgroup2` (e.g. with the `mount` command).
+Cgroup v1 controllers will have their own `cgroup` mounts (as indicated in 'options'), while a `cgroup2` mount indicates the use of cgroups v2, and the `cgroup.controllers` file inside the mount directory can be used to check active v2 controllers.
+
+A simpler, more practical approach in some cases might be to assume Systemd's three modes (legacy, hybrid and unified) cover all possible cases, and just to check the type of the `/sys/fs/cgroup` mount using `stat` (as recommended in <https://systemd.io/CGROUP_DELEGATION/>).
+The hybrid case can be detected by checking for `/sys/fs/cgroup/unified`, although in general this setup should simply behave the same as v1.
+
+Some other sources of information relating to cgroup version:
+- '`systemd --version`' shows `default-hierarchy={legacy,hybrid,unified}`
+- `/proc/cmdline` shows the kernel command-line args, e.g. used to override the default Systemd behaviour
+- `/proc/1/cgroup` shows cgroup hierarchies for PID 1, e.g. `6:memory:/` for the v1 'memory' controller, `0::/init.scope` for the v2 unified hierarchy
 
 
 ### Switching cgroup mode
 
-TODO
+The kernel is not responsible for creating the cgroup mounts in userspace.
+The init system may perform this setup (in the case of Systemd), or perhaps some user setup scripts.
+
+As mentioned above, Systemd provides boot parameters to control which cgroup version it should use:
+- `systemd.unified_cgroup_hierarchy=1` to use v2
+- `systemd.legacy_systemd_cgroup_controller=1` to use pure v1 (not hybrid)
+
+In addition, the kernel provides a `cgroup_no_v1` parameter to prevent controllers being enabled as v1 (e.g. set to '`all`' to disable all controllers on v1). Taken from the [kernel docs](https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html#mounting):
+> During transition to v2, system management software might still automount the v1 cgroup filesystem and so hijack all controllers during boot, before manual intervention is possible.
+> To make testing and experimenting easier, the kernel parameter `cgroup_no_v1=` allows disabling controllers in v1 and make them always available in v2.
 
 
 ## Cgroups and Containers
