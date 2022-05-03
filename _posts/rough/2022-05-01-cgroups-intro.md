@@ -274,6 +274,44 @@ In addition, the kernel provides a `cgroup_no_v1` parameter to prevent controlle
 
 ## Cgroups and Containers
 
+Cgroups are fundamental to Linux containers, serving the following purposes:
+- Resource limiting/sharing (memory, PIDs, CPUs, ...)
+- Resource monitoring
+- Controlling the group of processes (e.g. for stopping a container)
+
+An extreme simplification of the container creation flow is:
+- Create namespaces (PID namespace, UID/GID namespace, network namespace, ...)
+- Create cgroup for the container's processes
+- Chroot to the container's overlay filesystem
+
+The Docker and Podman container orchestrators (or more likely their underlying container runtimes, `runc` and `crun`) set up the `/sys/fs/cgroup` mount inside the container, passing through [a subset of] the host's cgroup filesystem.
+
+In this section I'm going to focus on the how the cgroup filesystem is set up within containers and how this maps onto the host's cgroup filesystem.
+I will go into detail around how this differs depending on variables such as the host's cgroup version and different container manager options.
+
+
+### Containers and cgroups v2
+
+First, for a bit of context, here's a timeline for cgroups v2 support in the Linux container ecosystem.
+- Linux kernel v4.5 (2016) releases official support for cgroups v2
+- Linux kernel v5.2 (2019) adds support for the 'freezer' controller, used for stopping containers
+- Podman v1.6.4 and Crun (2019) adds support for cgroups v2 in Fedora v31 [[blog post](https://podman.io/blogs/2019/10/29/podman-crun-f31.html)]
+- Docker v20.10 (2020) adds support for cgroups v2 (see [notes in the Docker docs](https://docs.docker.com/config/containers/runmetrics/#running-docker-on-cgroup-v2))
+
+The Docker project uses a label to identify issues related to cgroups v2, which may be of interest to see the issues that have needed fixing and their timelines: [Docker `area/cgroup2` label](https://github.com/moby/moby/issues?q=label%3Aarea%2Fcgroup2+).
+
+
+### Docker/Podman cgroup options
+
+Docker and Podman provide a few options to control how cgroups are set up.
+The Podman options are listed [here](https://docs.podman.io/en/latest/markdown/podman-run.1.html#cgroup-conf-key-value).
+There are also resource limiting options such as `--cpu-period=<limit>`, `--pids-limit=<limit>`, `--memory=<limit>` that are enforced using cgroups.
+
+The variables I'm going to focus on are the following:
+- Host cgroup version (v1 or v2)
+- `--cgroupns` option ('host' or 'private' cgroup namespace)
+- [`--cgroup-manager` Podman option](https://docs.podman.io/en/latest/markdown/podman.1.html#cgroup-manager-manager), or equivalently [Docker's `cgroupdriver` daemon config](https://stackoverflow.com/questions/43794169/docker-change-cgroup-driver-to-systemd/65870152#65870152)
+
 TODO
 
 
