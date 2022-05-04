@@ -312,7 +312,7 @@ There are also resource limiting options such as `--cpu-period=<limit>`, `--pids
 The variables I'm going to focus on are the following:
 - Host cgroup version (v1 or v2)
 - `--cgroupns` option ('host' or 'private' cgroup namespace)
-- [`--cgroup-manager` Podman option](https://docs.podman.io/en/latest/markdown/podman.1.html#cgroup-manager-manager), or equivalently [Docker's `cgroupdriver` daemon config](https://stackoverflow.com/questions/43794169/docker-change-cgroup-driver-to-systemd/65870152#65870152)
+- [`--cgroup-manager` Podman option](https://docs.podman.io/en/latest/markdown/podman.1.html#cgroup-manager-manager), or similarly [Docker's `cgroupdriver` daemon config](https://stackoverflow.com/questions/43794169/docker-change-cgroup-driver-to-systemd/65870152#65870152)
 
 As far as I can tell, the behaviour under different combinations of these variables has been influenced by historical choices and backwards compatibility.
 The situation is mostly the same between Docker and Podman, simply because Podman aims to closely mirror the Docker UI such that it can easily be dropped in as a replacement.
@@ -334,7 +334,23 @@ Overall this seems like a much nicer position to be in than the cgroups v1 behav
 
 #### Cgroup driver options
 
-TODO
+The cgroup manager/driver appears to relate to how a container's cgroup is created and managed.
+With Podman this can be controlled with the `--cgroup-manager` option [[docs](https://docs.podman.io/en/latest/markdown/podman.1.html#cgroup-manager-manager)], while with Docker it seems somewhat hidden and requires editing the `daemon.json` daemon config file.
+
+There are two accepted values for this option: 'systemd' and 'cgroupfs'.
+As far as I can tell, with 'systemd' the Systemd API will be used to set up cgroups, whereas with 'cgroupfs' the operations will be done by directly interacting with the filesystem.
+
+The choice of cgroup driver affects where the container's cgroups appear in the host's cgroup hierarchy.
+For example, for Podman, container cgroups are either placed under `machine.slice/libpod-<ctr>.scope/container/` (systemd) or `libpod_parent/libpod-<ctr>/` (cgroupfs), which makes sense if you're familiar with Systemd's 'slices' and 'scopes'.
+
+There is some discussion of the options in the Kubernetes docs, where 'systemd' is recommended: <https://kubernetes.io/docs/setup/production-environment/container-runtimes/#cgroup-drivers>.
+
+To provide a bit of history, Docker originally used a mixture of Systemd APIs and direct cgroupfs access.
+However, they had difficulty keeping up with Systemd API changes and so introduced the daemon flag in 2015, defaulting to 'cgroupfs' [[PR](https://github.com/moby/moby/pull/17704)].
+Support for the 'systemd' option was added in Runc in 2016 [[PR](https://github.com/opencontainers/runc/pull/667)].
+Under cgroups v2 Docker switched the default to 'systemd', and it seems Podman has always used this as the default.
+
+Docker and Podman also have a related option `--cgroup-parent` for specifying the cgroup path to create the container cgroups under.
 
 
 ## Manual Cgroup Manipulation
