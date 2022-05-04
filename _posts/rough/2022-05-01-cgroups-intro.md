@@ -286,6 +286,8 @@ An extreme simplification of the container creation flow is:
 
 The Docker and Podman container orchestrators (or more likely their underlying container runtimes, `runc` and `crun`) set up the `/sys/fs/cgroup` mount inside the container, passing through [a subset of] the host's cgroup filesystem.
 
+What I mean by this is that on the host there will be a cgroup corresponding to the container's processes, e.g. at `/sys/fs/cgroup/.../ctr1/`, and that this may be made to appear as the 'root' cgroup within the container at `/sys/fs/cgroup/` (conceptually like the cgroups have been namespaced, although there's some nuance to this discussed below).
+
 In this section I'm going to focus on the how the cgroup filesystem is set up within containers and how this maps onto the host's cgroup filesystem.
 I will go into detail around how this differs depending on variables such as the host's cgroup version and different container manager options.
 
@@ -301,7 +303,7 @@ First, for a bit of context, here's a timeline for cgroups v2 support in the Lin
 The Docker project uses a label to identify issues related to cgroups v2, which may be of interest to see the issues that have needed fixing and their timelines: [Docker `area/cgroup2` label](https://github.com/moby/moby/issues?q=label%3Aarea%2Fcgroup2+).
 
 
-### Docker/Podman cgroup options
+### Docker/Podman cgroup setup
 
 Docker and Podman provide a few options to control how cgroups are set up.
 The Podman options are listed [here](https://docs.podman.io/en/latest/markdown/podman-run.1.html#cgroup-conf-key-value).
@@ -311,6 +313,26 @@ The variables I'm going to focus on are the following:
 - Host cgroup version (v1 or v2)
 - `--cgroupns` option ('host' or 'private' cgroup namespace)
 - [`--cgroup-manager` Podman option](https://docs.podman.io/en/latest/markdown/podman.1.html#cgroup-manager-manager), or equivalently [Docker's `cgroupdriver` daemon config](https://stackoverflow.com/questions/43794169/docker-change-cgroup-driver-to-systemd/65870152#65870152)
+
+As far as I can tell, the behaviour under different combinations of these variables has been influenced by historical choices and backwards compatibility.
+The situation is mostly the same between Docker and Podman, simply because Podman aims to closely mirror the Docker UI such that it can easily be dropped in as a replacement.
+
+
+#### Cgroup namespace options
+
+When Docker started out, cgroup namespaces did not exist as a kernel feature (added in v4.6, 2016), so they did the "next best thing" of just mounting the container's cgroup hierarchy (from the perspective of the host) as if it was the root inside the container.
+For example, a container's cgroup file such as `/sys/fs/cgroup/cpuset/.../ctr1/cpuset.cpus` on the host would present itself at `/sys/fs/cgroup/cpuset/cpuset.cpus` inside the container.
+This is desirable because the container has access to only its own cgroups (namespacing), but bad because the kernel is unaware of this pseudo-namespacing and therefore the `/proc/$PID/cgroup` mapping is broken.
+
+Then cgroup namespaces as a kernel feature came along to address the problem, but Docker was unable to break backwards compatibility.
+Instead, they kept the above behaviour by default and offered a `--cgroupns=private` option when creating a container to set up cgroup namespacing properly (fixing the issue with `/proc/$PID/cgroup`).
+
+When cgroups v2 came along docker was able to start afresh and fix this behaviour.
+So with cgroups v2 `--cgroupns=private` is the default (which behaves the same way as on cgroups v1), whereas `--cgroupns=host` now gives you access to the full host's cgroup mount inside the container.
+Overall this seems like a much nicer position to be in than the cgroups v1 behaviour.
+
+
+#### Cgroup driver options
 
 TODO
 
