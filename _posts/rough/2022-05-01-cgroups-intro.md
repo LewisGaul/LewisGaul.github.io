@@ -355,6 +355,19 @@ Docker and Podman also have a related option `--cgroup-parent` for specifying th
 
 ### Running Systemd inside a container
 
+There are hard-line arguments for and against running Systemd inside containers.
+The situation was summarised quite nicely in a [blog post](https://developers.redhat.com/blog/2016/09/13/running-systemd-in-a-non-privileged-container) written by Dan Walsh (RedHat) in 2016.
+
+I'm not going to go into details around the debate here, but in short:
+- the Docker community seems to disagree with some of Systemd's design and/or the idea that it's ever correct to use Systemd inside a container ("containers should do one thing")
+- there are reasons to want a proper init system as PID 1 (hence the inception of simple init systems like [tini](https://github.com/krallin/tini))
+- there are reasons to want the init system to be Systemd (e.g. to manage a long-running process such as a web server or simulate a larger system inside a container)
+
+This section goes into detail about the technical side of getting Systemd running inside containers.
+
+
+#### Introducing the problem
+
 Inside a Docker/Podman container the `/sys/fs/cgroup` mount is automatically set up (presumably by the container runtime).
 As explained above, this may represent the full host's cgroups or be a sub-hierarchy corresponding to the container's cgroups depending on the `--cgroupns` option and the cgroups version.
 This may be in contrast to the host, where I believe the init system is responsible for creating the cgroup mounts.
@@ -363,24 +376,50 @@ When Systemd is started inside a container it detects its environment and tweaks
 Most of these differences in behaviour are small, and include things like having a different shutdown behaviour.
 
 Systemd is happy to start in an already-mounted cgroup setup, and it will then take ownership of the cgroup it finds itself in, creating further child cgroups for other system processes it manages.
-As far as I'm aware this behaviour is no different inside a container to outside a container, except that inside a container it will actually be started in a non-root cgroup.
+As far as I'm aware this behaviour is no different inside a container to outside a container, except that inside a container it may actually be started in a non-root cgroup (where the host's root cgroup is treated as special under cgroups v2).
 
-The problem arises from the fact that for Systemd to take ownership of the container's cgroups (including creating and modifying cgroups), and therefore write access to the cgroup mount(s) is required.
+The main problem arises from the fact that Systemd expects to take ownership of the container's cgroups (including creating and modifying cgroups), and therefore write access to the cgroup mount(s) is required.
 However, in non-privileged mode Docker sets up the mounts as read-only for the container.
-(Note that in cgroups v1 it's the cgroup subsystem mounts that need to be writable - the containing tmpfs would only need to be writable to allow creating new cgroup mounts inside it).
 
-Podman emulates Docker's behaviour by default, but provides a `--systemd={false,true,always}` option to support setting up the container to be suitable for Systemd to run.
-This was [introduced in 2019](https://developers.redhat.com/blog/2019/04/24/how-to-run-systemd-in-a-container#enter_podman). The behaviour is as follows [[docs](https://docs.podman.io/en/latest/markdown/podman-run.1.html?highlight=systemd%3Dalways#systemd-true-false-always)]:
-- `--systemd=false`: match Docker's behaviour
-- `--systemd=true` (default): detect whether Systemd is the entrypoint and set stuff up for Systemd to run
-- `--systemd=always`: set stuff up for Systemd to run regardless of entrypoint
+(Note that in cgroups v1 it's the cgroup subsystem mounts that need to be writable - the containing tmpfs would only need to be writable to allow creating new cgroup mounts inside it, which is not something Systemd will generally need to do.)
 
-Aside from, and prior to, the option of using Podman, there have been a number of discussions on StackOverflow and issue trackers about how to run non-privileged Systemd containers using Docker.
-The general recommendation under cgroups v1 is to explicitly mount the host's full cgroup filesystem into the container, since this overrides the container runtime's setup and allows write access to the subsystem mounts.
-The downside of this is that the entirety of the host's cgroup filesystem is then available to the container, and is even writable!
+
+#### Problems with Systemd in Docker
+
+There are a number of discussions on StackOverflow and issue trackers on the topic of running Systemd inside Docker containers [[1](https://github.com/moby/moby/issues/18796), [2](https://devops.stackexchange.com/questions/1635/is-there-any-concrete-and-acceptable-solution-for-running-systemd-inside-the-doc), [3](https://github.com/moby/moby/issues/30723), [4](https://github.com/systemd/systemd/issues/1224)].
+The general recommendation (as per Systemd's declaration of the '[container interface](https://systemd.io/CONTAINER_INTERFACE/)') is to:
+1. Explicitly mount the host's full cgroup filesystem into the container.
+2. Ensure `/run` is mounted as tmpfs.
+3. Provide the `SYS_ADMIN` capability
+4. Specify the stop signal to be `SIGRTMIN+3`.
+
+Point 1 is required to override the container runtime's setup and allow write access to the subsystem mounts - by default Docker creates the cgroup mounts as read-only.
+The arguments to pass in to achieve this are '`-v /sys/fs/cgroup:/sys/fs/cgroup:ro`' (or '`rw`' under cgroups v2).
+Note that this can only be expected to work when using `--cgroupns=host`, otherwise the container will be set up as if it has a private cgroup namespace but the explicit mount will give the host's cgroups (see [Lennart's comment](https://github.com/systemd/systemd/issues/19245#issuecomment-815954506)), and that 'private' is the default under cgroups v2.
+
+The downside of this is that the entirety of the host's cgroup filesystem is then available to the container, and the cgroup mounts are even writable!
 This means the container can easily modify resource limits, including its own, which is far from ideal.
 
-TODO
+Points 2, 3 and 4 can be satisfied by passing '`--tmpfs /run --cap-add SYS_ADMIN --stop-signal SIGRTMIN+3`'.
+Of course, it's not ideal to have to specify this extra capability, but Systemd requires it to create mounts private to the container.
+
+Note that there is one alternative solution: to have a custom shell script entrypoint to perform some setup before calling '`exec /sbin/init`' to let Systemd take over as PID 1.
+The setup that can be done is:
+- ensure `/run` is mounted as a tmpfs, e.g. with '`mount tmpfs /run -t tmpfs`'
+- remount the cgroupfs as read-write, e.g. with '`mount /sys/fs/cgroup -o remount,rw`' (only works with cgroups v2)
+
+This removes the need to pass '`--tmpfs /run`' and '`-v /sys/fs/cgroup:/sys/fs/cgroup --cgroupns host`', with the biggest benefit being that a private cgroup namespace can be used, giving proper isolation within the container.
+
+
+#### Podman's support for Systemd
+
+Podman emulates Docker's behaviour by default, but also provides a `--systemd={false,true,always}` option to support setting up the container to be suitable for Systemd to run.
+This was [introduced in 2019](https://developers.redhat.com/blog/2019/04/24/how-to-run-systemd-in-a-container#enter_podman).
+
+The behaviour is as follows [[docs](https://docs.podman.io/en/latest/markdown/podman-run.1.html?highlight=systemd%3Dalways#systemd-true-false-always)]:
+- `--systemd=false`: match Docker's behaviour
+- `--systemd=true` (default): detect whether Systemd is the entrypoint and set up the container for Systemd to run
+- `--systemd=always`: set up the container for Systemd to run regardless of the entrypoint
 
 
 ## Manual Cgroup Manipulation
