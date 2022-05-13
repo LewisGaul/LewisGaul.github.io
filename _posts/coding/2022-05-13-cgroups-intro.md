@@ -1,7 +1,7 @@
 ---
 title: Cgroups Introduction
 layout: post
-categories: [coding, rough]
+categories: [coding]
 tags: [linux, cgroups, informational]
 ---
 
@@ -380,11 +380,12 @@ As far as I'm aware this behaviour is no different inside a container to outside
 
 The main problem arises from the fact that Systemd expects to take ownership of the container's cgroups (including creating and modifying cgroups), and therefore write access to the cgroup mount(s) is required.
 However, in non-privileged mode Docker sets up the mounts as read-only for the container.
+I'm not exactly sure why the cgroup mounts are mounted read-only, at least in the cases where the container only has a view of its own cgroups...
 
 (Note that in cgroups v1 it's the cgroup subsystem mounts that need to be writable - the containing tmpfs would only need to be writable to allow creating new cgroup mounts inside it, which is not something Systemd will generally need to do.)
 
 
-#### Problems with Systemd in Docker
+#### Systemd inside Docker containers
 
 There are a number of discussions on StackOverflow and issue trackers on the topic of running Systemd inside Docker containers [[1](https://github.com/moby/moby/issues/18796), [2](https://devops.stackexchange.com/questions/1635/is-there-any-concrete-and-acceptable-solution-for-running-systemd-inside-the-doc), [3](https://github.com/moby/moby/issues/30723), [4](https://github.com/systemd/systemd/issues/1224)].
 The general recommendation (as per Systemd's declaration of the '[container interface](https://systemd.io/CONTAINER_INTERFACE/)') is to:
@@ -406,7 +407,7 @@ Of course, it's not ideal to have to specify this extra capability, but Systemd 
 Note that there is one alternative solution: to have a custom shell script entrypoint to perform some setup before calling '`exec /sbin/init`' to let Systemd take over as PID 1.
 The setup that can be done is:
 - ensure `/run` is mounted as a tmpfs, e.g. with '`mount tmpfs /run -t tmpfs`'
-- remount the cgroupfs as read-write, e.g. with '`mount /sys/fs/cgroup -o remount,rw`' (only works with cgroups v2)
+- remount the cgroupfs as read-write, e.g. with '`mount /sys/fs/cgroup -o remount,rw`' (*only works with cgroups v2*)
 
 This removes the need to pass '`--tmpfs /run`' and '`-v /sys/fs/cgroup:/sys/fs/cgroup --cgroupns host`', with the biggest benefit being that a private cgroup namespace can be used, giving proper isolation within the container.
 
