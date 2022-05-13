@@ -59,7 +59,7 @@ Inside the container you could use an entrypoint that does something like the fo
 
 # Move the host cgroups somewhere else.
 mkdir /host-cgroups
-mount -M /sys/fs/cgroup /host-cgroups
+mount --move /sys/fs/cgroup /host-cgroups
 # Create the container cgroup tmpfs.
 mount -t tmpfs cgroup /sys/fs/cgroup
 # For each controller bind-mount from the host cgroups.
@@ -70,7 +70,7 @@ for ctrlr in "${controllers[@]}"; do
   mount --bind "/host-cgroups/$ctrlr$cgroup_subpath" "/sys/fs/cgroup/$ctrlr"
 done
 # Clean up.
-umount -R /host-cgroups
+umount --recursive /host-cgroups
 rmdir /host-cgroups
 
 # Start systemd or other init system/entrypoint.
@@ -81,7 +81,7 @@ Alternatively, a cgroup namespace could presumably be created within the contain
 
 This is reaching beyond the normal responsibilities of a container's init system, as this is supposed to all be set up by the container engine!
 
-**Is this a reasonable workaround though?**
+**Is this a reasonable workaround though, or could this be fragile?**
 
 
 ### When is it valid to manually manipulate container cgroups?

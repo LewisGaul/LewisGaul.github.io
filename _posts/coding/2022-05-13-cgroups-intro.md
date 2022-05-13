@@ -425,7 +425,48 @@ The behaviour is as follows [[docs](https://docs.podman.io/en/latest/markdown/po
 
 ## Manual Cgroup Manipulation
 
-TODO
+As stated in the introduction, taken from the Linux manpages, the cgroup filesystem provides an interface to control cgroups via reading from/writing to special files.
+Similarly, cgroups can be created/removed in the hierarchy using `mkdir` and `rmdir`.
+
+For example, to restrict a process to run on a specific CPU this can be achieved as follows (on cgroups v1):
+```bash
+#!/bin/bash
+
+cpuset_cgroup_path="/sys/fs/cgroup/cpuset"
+# Create a new cgroup.
+my_cgroup_path="$cpuset_cgroup_path/my-cgroup"
+mkdir "$my_cgroup_path"
+# Restrict to CPU 0 (also set the memory nodes).
+echo 0 > "$my_cgroup_path/cpuset.cpus"
+cat "$cpuset_cgroup_path/cpuset.mems" > "$my_cgroup_path/cpuset.mems"
+# Start a process and move it to the custom cgroup.
+sleep 100 &
+echo $! > "$my_cgroup_path/cgroup.procs"
+```
+
+On cgroups v2 this is complicated slightly by the fact that leaf nodes (cgroups containing processes) cannot host child leaf nodes, and that the set of enabled controllers is managed by the parent cgroup.
+Therefore, the equivalent to the above would be something like:
+```bash
+#!/bin/bash
+
+root_cgroup_path="/sys/fs/cgroup"
+# Enable the cpuset controller in child cgroups.
+echo +cpuset > "$root_cgroup_path/cgroup.subtree_control"
+# Create a new cgroup.
+my_cgroup_path="$root_cgroup_path/my-cgroup"
+mkdir "$my_cgroup_path"
+# Restrict to CPU 0 (also set the memory nodes).
+echo 0 > "$my_cgroup_path/cpuset.cpus"
+cat "$cpuset_cgroup_path/cpuset.mems" > "$my_cgroup_path/cpuset.mems"
+# Create another new cgroup to move all existing processes into.
+mkdir "$root_cgroup_path/leaf"
+while read line; do
+  echo "$line" > "$root_cgroup_path/leaf/cgroup.procs"
+done < "$root_cgroup_path/cgroup.procs"
+# Start a process and move it to the custom cgroup.
+sleep 100 &
+echo $! > "$my_cgroup_path/cgroup.procs"
+```
 
 ### Systemd cgroup ownership
 
