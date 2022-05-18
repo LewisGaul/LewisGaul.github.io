@@ -389,10 +389,10 @@ I'm not exactly sure why the cgroup mounts are mounted read-only, at least in th
 
 There are a number of discussions on StackOverflow and issue trackers on the topic of running Systemd inside Docker containers [[1](https://github.com/moby/moby/issues/18796), [2](https://devops.stackexchange.com/questions/1635/is-there-any-concrete-and-acceptable-solution-for-running-systemd-inside-the-doc), [3](https://github.com/moby/moby/issues/30723), [4](https://github.com/systemd/systemd/issues/1224)].
 The general recommendation (as per Systemd's declaration of the '[container interface](https://systemd.io/CONTAINER_INTERFACE/)') is to:
-1. Explicitly mount the host's full cgroup filesystem into the container.
-2. Ensure `/run` is mounted as tmpfs.
+1. Explicitly mount the host's full cgroup filesystem into the container
+2. Ensure `/run` is mounted as tmpfs
 3. Provide the `SYS_ADMIN` capability
-4. Specify the stop signal to be `SIGRTMIN+3`.
+4. Specify the stop signal to be `SIGRTMIN+3`
 
 Point 1 is required to override the container runtime's setup and allow write access to the subsystem mounts - by default Docker creates the cgroup mounts as read-only.
 The arguments to pass in to achieve this are '`-v /sys/fs/cgroup:/sys/fs/cgroup:ro`' (or '`rw`' under cgroups v2).
@@ -470,4 +470,29 @@ echo $! > "$my_cgroup_path/cgroup.procs"
 
 ### Systemd cgroup ownership
 
-TODO
+Systemd's [Control Group APIs and Delegation](https://systemd.io/CGROUP_DELEGATION/) document describes the cgroups interface defined by the Systemd project.
+As noted at the top, the intended audience is "hackers working on userspace subsystems that require direct cgroup access, such as container managers and similar".
+In general the considerations in this document should be taken care of by the container manager (e.g Docker/Podman), however for cases where the container payload represents a 'system' itself this can become relevant.
+
+The key point I want to focus on is the following:
+> The single-writer rule: this means that each cgroup only has a single writer, i.e. a single process managing it.
+> It's OK if different cgroups have different processes managing them.
+> However, only a single process should own a specific cgroup, and when it does that ownership is exclusive, and nothing else should manipulate it at the same time.
+> This rule ensures that various pieces of software don't step on each other's toes constantly.
+
+This seems like a reasonably sensible concept, although it should be noted that this is an agreement that's been asserted by Systemd and not something that's been agreed more widely in the Linux community (as far as I'm aware).
+That being said, if you're using Systemd as your init system then you should probably care about the API contracts Systemd provides!
+
+By default Systemd (running as PID 1) will see itself as owning all cgroups.
+The recommended mechanism for taking ownership of parts of the cgroup hierarchy is by using Systemd's *delegation*, primarily via `Delegate=` in scope/service files.
+
+The document goes on to talk about running Systemd inside a container, where it states:
+> systemd unconditionally needs write access to the cgroup tree however, hence you need to delegate a sub-tree to it.
+> Note that there's nothing too special you have to do beyond that: just invoke systemd as PID 1 inside the root of the delegated cgroup sub-tree,  it will figure out the rest: it will determine the cgroup it is running in and take possession of it.
+> It won't interfere with any cgroup outside of the sub-tree it was invoked in.
+
+Bringing out some points/corollaries from the above explicitly:
+- Container managers should be appropriately delegating container cgroups on Systemd systems such that the container manager (or the container itself) can take ownership of them.
+  - This may be the purpose of using 'systemd' as the cgroupfs manager/driver, I'm not entirely sure.
+- Containers should be able to 'own' the cgroup they exist in, since if Systemd is the payload then it expects to be able to take ownership!
+- Systemd explicitly states that it will not interfere with cgroups above the cgroup it is invoked in.
