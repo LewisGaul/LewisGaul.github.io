@@ -29,26 +29,30 @@ In each case, the privileges *within the container* may be higher than on the ho
 
 **So why are the container's cgroups not made writable?**
 
+Is it just that the original design of Docker didn't/doesn't cater for running anything more than a simple single-process app?
+
 
 ### Is it sound to override Docker's mounting of the private container cgroups under v1?
 
-Under cgroups v1 (`--cgroupns=host` as per the default), `/sys/fs/cgroup/<subsystem>/.../<container>/` on the host is mapped to `/sys/fs/cgroup/<subsystem>/` within the container.
-This is achieved using bind mounts rather than cgroup namespaces.
+Under cgroups v1 (`--cgroupns=host` as per the default), `/sys/fs/cgroup/<subsystem>/docker/<container>/` on the host is mapped to `/sys/fs/cgroup/<subsystem>/` within the container.
+This is achieved using bind mounts rather than cgroup namespaces (since cgroup namespaces didn't exist when this was first implemented).
 When `--cgroupns=private` is used (the default on cgroups v2) the same mapping is set up, but it is achieved via true cgroup namespaces.
 
-However, when passing `-v /sys/fs/cgroup:/sys/fs/cgroup`, as recommended online for getting Systemd running inside a Docker container (so that the mounts are available as read-write rather than read-only), the container will have access to the host's full cgroup mounts.
-Even if the mount is passed as read-only, Systemd requires the `SYS_ADMIN` capability which allows mounting, so the container is able to remount and make the mount writable.
-Furthermore, the actual v1 cgroup mounts inside the `/sys/fs/cgroup` tmpfs are writable anyway!
+When running Systemd the cgroup mounts under `/sys/fs/cgroup/` (or at least `/sys/fs/cgroup/systemd`) are required to be mounted read-write (not read-only).
+A common recommendation for achieving this with Docker is to pass  `-v /sys/fs/cgroup:/sys/fs/cgroup:ro`.
+This setup ensures the container has full read-write access to the v1 cgroup subsystem mounts inside the `/sys/fs/cgroup` tmpfs.
+Note that even if the `/sys/fs/cgroup` tmpfs mount is passed as read-only, Systemd requires the `SYS_ADMIN` capability which allows mounting, so inside the container it's possible to remount and make the mount writable.
+Overall this approach involves giving the container a lot of control over the host's cgroup filesystem!
 
-Note that when `-v /sys/fs/cgroup:/sys/fs/cgroup` is passed it's definitely a bad idea to use `--cgroupns=private` because the container would then be set up with a private cgroup namespace but actually have access to the full host cgroups.
+Note that when `-v /sys/fs/cgroup:/sys/fs/cgroup` is passed it's definitely a bad idea to use `--cgroupns=private` because the container would then be set up with a private cgroup namespace but actually have access to the full host cgroups at `/sys/fs/cgroup` (so none of the paths would be as expected).
 
 When using this workaround the container has full write access to all of the host's cgroups, which is very bad in terms of isolation - it opens the door to many ways of *killing the host system* by restricting resources or otherwise.
 
-**Are there any *other* concerns with this approach**?
+**Are there any *other* concerns with this approach in terms of the container's view of its cgroups?**
 
-It seems to certainly be against the way Docker was designed, considering Docker sets up `/sys/fs/cgroup` in its own way and this approach just blats over the top...
+Passing in `/sys/fs/cgroup` seems to certainly be against the way Docker was designed, considering Docker sets the cgroup filesystem up in its own way and this approach just blats over the top...
 
-All we really want is a way to make the private cgroup mounts writable inside the container!
+All we really want is a way to make the (private) cgroup mounts writable inside the container!
 If you run '`mount -o remount,rw /sys/fs/cgroup/<subsystem>`' inside a container under cgroups v1 you get the message "mount point is busy".
 Presumably this is because a Docker process (`containerd`?) owns the mount and exists outside of the container's namespaces?
 
@@ -77,13 +81,19 @@ rmdir /host-cgroups
 exec /sbin/init
 ```
 
-Alternatively, a cgroup namespace could presumably be created within the container (if the kernel supports it).
+Alternatively, the cgroup mounts set up by Docker inside the container could simply be unmounted and replaced with 'normal' cgroup mounts (instead of the pseudo-namespaced bind mounts that Systemd [explicitly states](https://systemd.io/CGROUP_DELEGATION/) they believe is *not* a valid approach).
+Or perhaps it would even be possible to create a cgroup namespace from within the container (if the kernel supports it).
 
-This is reaching beyond the normal responsibilities of a container's init system, as this is supposed to all be set up by the container engine!
+However, this is getting beyond the normal responsibilities of a container's init system, as this is supposed to all be set up by the container engine!
 
-**Is this a reasonable workaround though, or could this be fragile?**
+**Is modifying/replacing the cgroup mounts set up by the container engine a reasonable workaround, or could this be fragile?**
+
+
+### What happens if you have two of the same cgroup mount?
+
+TODO
 
 
 ### When is it valid to manually manipulate container cgroups?
 
-
+TODO
