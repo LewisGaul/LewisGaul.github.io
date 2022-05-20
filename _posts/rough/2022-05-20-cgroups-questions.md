@@ -16,12 +16,31 @@ My contact details can be found in the bottom-right of each page.
 As per [Introducing the problem](/blog/coding/2022/05/13/cgroups-intro/#introducing-the-problem) in my previous post.
 I assume Podman does this mainly to mirror Docker's behaviour, so the real question is why Docker has this behaviour.
 
-It would make sense in the case where the host's cgroups are available to the container, but in the isolated case (cgroups v1 with the 'pseudo private' cgroups under `--cgroupns=host`, or cgroups v1/v2 under `--cgroupns=private`) I'm not sure why this restriction is needed.
+```
+root@ubuntu:~# docker run --rm -it ubuntu:20.04
+root@28a1e1d61da3:/# findmnt -R /sys/fs/cgroup/
+TARGET                            SOURCE                                                                           FSTYPE OPTIONS
+/sys/fs/cgroup                    tmpfs                                                                            tmpfs  rw,nosuid,nodev,noexec,relatime,mode=755
+|-/sys/fs/cgroup/systemd          cgroup[/docker/28a1e1d61da341fd73d8a22ebae5c103b6c7edceb9c0b08caaab61263c6ad7dc] cgroup ro,nosuid,nodev,noexec,relatime,xattr,release_agent=/lib/
+|-/sys/fs/cgroup/pids             cgroup[/docker/28a1e1d61da341fd73d8a22ebae5c103b6c7edceb9c0b08caaab61263c6ad7dc] cgroup ro,nosuid,nodev,noexec,relatime,pids
+|-/sys/fs/cgroup/cpu,cpuacct      cgroup[/docker/28a1e1d61da341fd73d8a22ebae5c103b6c7edceb9c0b08caaab61263c6ad7dc] cgroup ro,nosuid,nodev,noexec,relatime,cpu,cpuacct
+|-/sys/fs/cgroup/devices          cgroup[/docker/28a1e1d61da341fd73d8a22ebae5c103b6c7edceb9c0b08caaab61263c6ad7dc] cgroup ro,nosuid,nodev,noexec,relatime,devices
+|-/sys/fs/cgroup/net_cls,net_prio cgroup[/docker/28a1e1d61da341fd73d8a22ebae5c103b6c7edceb9c0b08caaab61263c6ad7dc] cgroup ro,nosuid,nodev,noexec,relatime,net_cls,net_prio
+|-/sys/fs/cgroup/memory           cgroup[/docker/28a1e1d61da341fd73d8a22ebae5c103b6c7edceb9c0b08caaab61263c6ad7dc] cgroup ro,nosuid,nodev,noexec,relatime,memory
+|-/sys/fs/cgroup/hugetlb          cgroup[/docker/28a1e1d61da341fd73d8a22ebae5c103b6c7edceb9c0b08caaab61263c6ad7dc] cgroup ro,nosuid,nodev,noexec,relatime,hugetlb
+|-/sys/fs/cgroup/rdma             cgroup                                                                           cgroup ro,nosuid,nodev,noexec,relatime,rdma
+|-/sys/fs/cgroup/freezer          cgroup[/docker/28a1e1d61da341fd73d8a22ebae5c103b6c7edceb9c0b08caaab61263c6ad7dc] cgroup ro,nosuid,nodev,noexec,relatime,freezer
+|-/sys/fs/cgroup/cpuset           cgroup[/docker/28a1e1d61da341fd73d8a22ebae5c103b6c7edceb9c0b08caaab61263c6ad7dc] cgroup ro,nosuid,nodev,noexec,relatime,cpuset
+`-/sys/fs/cgroup/perf_event       cgroup[/docker/28a1e1d61da341fd73d8a22ebae5c103b6c7edceb9c0b08caaab61263c6ad7dc] cgroup ro,nosuid,nodev,noexec,relatime,perf_event
+```
+
+It would make sense in the case where the host's cgroups are available to the container, but in the isolated case (cgroups v1 with the 'pseudo private' cgroups under `--cgroupns=host` shown above, or cgroups v1/v2 under `--cgroupns=private`) I'm not sure why this restriction is needed.
 
 Taking a step back, a fundamental part of containers is the namespaces that are used.
 - The filesystem chroot (the root directory `/` is owned by the container)
 - The network namespace (all ports and IP addresses are available to the container unless host networking is used)
 - PID namespace (containers have their own PID 1 init process)
+- Mount namespace (container mounts are listed separately)
 - UID and GID namespaces (the `root` user is available in the container even if the container is not run by root)
 - Cgroup namespace (only the container's cgroups are visible to the container by default, made available at `/sys/fs/cgroup/`)
 
@@ -51,7 +70,6 @@ When using this workaround the container has full write access to all of the hos
 **Are there any *other* concerns with this approach in terms of the container's view of its cgroups?**
 
 Passing in `/sys/fs/cgroup` seems to certainly be against the way Docker was designed, considering Docker sets the cgroup filesystem up in its own way and this approach just blats over the top...
-
 All we really want is a way to make the (private) cgroup mounts writable inside the container!
 If you run '`mount -o remount,rw /sys/fs/cgroup/<subsystem>`' inside a container under cgroups v1 you get the message "mount point is busy".
 Presumably this is because a Docker process (`containerd`?) owns the mount and exists outside of the container's namespaces?
@@ -86,13 +104,13 @@ Or perhaps it would even be possible to create a cgroup namespace from within th
 
 However, this is getting beyond the normal responsibilities of a container's init system, as this is supposed to all be set up by the container engine!
 
-**Is modifying/replacing the cgroup mounts set up by the container engine a reasonable workaround, or could this be fragile?**
+**Is modifying/replacing the cgroup mounts set up by the container engine (as above) a reasonable workaround, or could this be fragile?**
 
 
 ## When is it valid to manually manipulate container cgroups?
 
 This relates to the two questions above - in the case where we have a private cgroup namespace with the cgroups writable inside the container, can the container 'own' this part of the cgroup hierarchy?
-From the setup described it seems like the answer should certainly be 'yes', but in practice it seems it could be a bit more nuanced based on some statements made in Systemd documentation.
+With a basic understanding of the setup it seems like the answer should certainly be 'yes', but in practice it seems it could be a bit more nuanced based on some statements made in Systemd documentation.
 
 On a host running Systemd as its init system (PID 1), Systemd 'owns' all cgroups by default.
 Whenever another process wants to modify/create cgroups the expectation is that a part of the hierarchy is 'delegated' using a Systemd API or config file (e.g. `Delegate=true`), as explained under 'Delegation' at <https://systemd.io/CGROUP_DELEGATION/>.
@@ -121,13 +139,25 @@ This feels like a mild situation of 'container break-out', where the container i
 
 **Why doesn't Docker use another layer of indirection in the cgroup hiearchy such that the limit is applied in the parent cgroup to the container?**
 
-That is, wouldn't it be better for there to be a cgroup `/sys/fs/cgroup/<ctrlr>/docker/<ctr>/container/` that maps to `/sys/fs/cgroup/<ctrlr>/` inside the container, with any resource limits set on the `/sys/fs/cgroup/<ctrlr>/docker/<ctr>/` cgroup?
+That is, wouldn't it be better for there to be a cgroup `/sys/fs/cgroup/<subsystem>/docker/<ctr>/container/` that maps to `/sys/fs/cgroup/<subsystem>/` inside the container, with any resource limits set on the `/sys/fs/cgroup/<subsystem>/docker/<ctr>/` cgroup?
+
+
+## How can you check effective cgroup limits from a private cgroup namespace?
+
+The cpuset cgroup controller has separate files for "the cpuset restriction applied in this cgroup" and "the effective cpuset restriction based on restrictions in the whole hierarchy".
+These are `cpuset.cpus` and either `cpuset.effective_cpus` or `cpuset.cpus.effective` under cgroups v1 and v2 respectively.
+
+However, the memory controller (as well as equivalent for hugetlb and possibly others) only has `memory.limit_in_bytes`, seemingly with no `memory.limit_in_bytes.effective` or equivalent.
+A workaround to try and find the effective cgroup memory limit would be to look for the smallest limit as you traverse up the cgroup hierarchy.
+However, this approach assumes you have access to the full hierarchy, which is not the case when in a cgroup namespace.
+
+**Does the above mean there's no way to check the effective cgroup memory restriction from within a cgroup namespace?**
 
 
 ## What happens if you have two of the same cgroup mount?
 
 Cgroup mounts can be created anywhere, although the standard location is under `/sys/fs/cgroup`.
-It's fairly easy to check what happens when you create further cgroup mounts (e.g. in addition to the standard `/sys/fs/cgroup` ones), simply by running something like '`mkdir /cgroups && mount -t cgroup /sys/fs/cgroup cgroup /cgroups -o <ctrlr>`'.
+It's fairly easy to check what happens when you create further cgroup mounts (e.g. in addition to the standard `/sys/fs/cgroup` ones), simply by running something like '`mkdir /cgroups && mount -t cgroup /sys/fs/cgroup cgroup /cgroups -o <subsystem>`'.
 
 It appears that all cgroup mounts (of the same type) will share the same contents, which makes sense if you consider the cgroupfs simply reflects what's been configured via the kernel (it's effectively just an interface onto kernel configuration).
 
