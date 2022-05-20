@@ -137,7 +137,7 @@ This maps to `/sys/fs/cgroup/memory/memory.limit_in_bytes` inside the container,
 A consequence of this is that the container can see (and modify if it has write permissions) the limit that's been imposed!
 This feels like a mild situation of 'container break-out', where the container isolation is broken.
 
-**Why doesn't Docker use another layer of indirection in the cgroup hiearchy such that the limit is applied in the parent cgroup to the container?**
+**Why doesn't Docker use another layer of indirection in the cgroup hierarchy such that the limit is applied in the parent cgroup to the container?**
 
 That is, wouldn't it be better for there to be a cgroup `/sys/fs/cgroup/<subsystem>/docker/<ctr>/container/` that maps to `/sys/fs/cgroup/<subsystem>/` inside the container, with any resource limits set on the `/sys/fs/cgroup/<subsystem>/docker/<ctr>/` cgroup?
 
