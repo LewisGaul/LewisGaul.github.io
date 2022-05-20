@@ -11,7 +11,7 @@ If anyone has any answers please get in touch!
 My contact details can be found in the bottom-right of each page.
 
 
-### Why are private cgroups mounted read-only in non-privileged containers?
+## Why are private cgroups mounted read-only in non-privileged containers?
 
 As per [Introducing the problem](/blog/coding/2022/05/13/cgroups-intro/#introducing-the-problem) in my previous post.
 I assume Podman does this mainly to mirror Docker's behaviour, so the real question is why Docker has this behaviour.
@@ -32,7 +32,7 @@ In each case, the privileges *within the container* may be higher than on the ho
 Is it just that the original design of Docker didn't/doesn't cater for running anything more than a simple single-process app?
 
 
-### Is it sound to override Docker's mounting of the private container cgroups under v1?
+## Is it sound to override Docker's mounting of the private container cgroups under v1?
 
 Under cgroups v1 (`--cgroupns=host` as per the default), `/sys/fs/cgroup/<subsystem>/docker/<container>/` on the host is mapped to `/sys/fs/cgroup/<subsystem>/` within the container.
 This is achieved using bind mounts rather than cgroup namespaces (since cgroup namespaces didn't exist when this was first implemented).
@@ -82,18 +82,72 @@ exec /sbin/init
 ```
 
 Alternatively, the cgroup mounts set up by Docker inside the container could simply be unmounted and replaced with 'normal' cgroup mounts (instead of the pseudo-namespaced bind mounts that Systemd [explicitly states](https://systemd.io/CGROUP_DELEGATION/) they believe is *not* a valid approach).
-Or perhaps it would even be possible to create a cgroup namespace from within the container (if the kernel supports it).
+Or perhaps it would even be possible to create a cgroup namespace from within the container (if the kernel supports it)?
 
 However, this is getting beyond the normal responsibilities of a container's init system, as this is supposed to all be set up by the container engine!
 
 **Is modifying/replacing the cgroup mounts set up by the container engine a reasonable workaround, or could this be fragile?**
 
 
-### What happens if you have two of the same cgroup mount?
+## When is it valid to manually manipulate container cgroups?
 
-TODO
+This relates to the two questions above - in the case where we have a private cgroup namespace with the cgroups writable inside the container, can the container 'own' this part of the cgroup hierarchy?
+From the setup described it seems like the answer should certainly be 'yes', but in practice it seems it could be a bit more nuanced based on some statements made in Systemd documentation.
+
+On a host running Systemd as its init system (PID 1), Systemd 'owns' all cgroups by default.
+Whenever another process wants to modify/create cgroups the expectation is that a part of the hierarchy is 'delegated' using a Systemd API or config file (e.g. `Delegate=true`), as explained under 'Delegation' at <https://systemd.io/CGROUP_DELEGATION/>.
+As made clear in the linked document, cgroup managers (such as Docker) are expected to tell Systemd that they wish to own a part of the cgroup hierarchy to avoid "treading on each other's toes" when new cgroups are created for each container.
+
+Assuming this is respected by the container manager (if it isn't then any problems can partially be blamed on the Systemd/container manager API!), the container's cgroups should not be managed by the host's Systemd.
+This means that as long as the container manager allows it, the container (or more specifically the processes running inside the container namespace) should be safe to make modifications.
+
+**Do container managers such as Docker and Podman correctly delegate cgroups on hosts running Systemd?**
+
+**Are these container managers happy for the container to take ownership of the container's cgroup?**
+
+In the case where Systemd is run inside the container, surely it wants to take ownership of the the hierarchy from the point it finds itself in (as discussed in the [Systemd cgroup ownership](/blog/coding/2022/05/13/cgroups-intro/#systemd-cgroup-ownership) section of my previous post).
+Therefore, if running Systemd inside a container is considered 'valid', then surely it's also valid for a container to modify its cgroups instead of/before running Systemd?
 
 
-### When is it valid to manually manipulate container cgroups?
+## Why are the container's cgroup limits not set on a parent cgroup under Docker/Podman?
 
-TODO
+There are some Docker/Podman options for enforcing a limit via a cgroup controller.
+For example '`docker run --memory 10000000`' where a memory limit is applied to the container via the memory cgroup controller.
+This seems to be achieved by setting the limit with the `/sys/fs/cgroup/memory/docker/<ctr>/memory.limit_in_bytes` cgroup file.
+This maps to `/sys/fs/cgroup/memory/memory.limit_in_bytes` inside the container, i.e. the container can see the limit that's been applied in its root cgroup directory.
+
+A consequence of this is that the container can see (and modify if it has write permissions) the limit that's been imposed!
+This feels like a mild situation of 'container break-out', where the container isolation is broken.
+
+**Why doesn't Docker use another layer of indirection in the cgroup hiearchy such that the limit is applied in the parent cgroup to the container?**
+
+That is, wouldn't it be better for there to be a cgroup `/sys/fs/cgroup/<ctrlr>/docker/<ctr>/container/` that maps to `/sys/fs/cgroup/<ctrlr>/` inside the container, with any resource limits set on the `/sys/fs/cgroup/<ctrlr>/docker/<ctr>/` cgroup?
+
+
+## What happens if you have two of the same cgroup mount?
+
+Cgroup mounts can be created anywhere, although the standard location is under `/sys/fs/cgroup`.
+It's fairly easy to check what happens when you create further cgroup mounts (e.g. in addition to the standard `/sys/fs/cgroup` ones), simply by running something like '`mkdir /cgroups && mount -t cgroup /sys/fs/cgroup cgroup /cgroups -o <ctrlr>`'.
+
+It appears that all cgroup mounts (of the same type) will share the same contents, which makes sense if you consider the cgroupfs simply reflects what's been configured via the kernel (it's effectively just an interface onto kernel configuration).
+
+Presumably the same thing is true inside a container (and experimentally this seems to be the case - there's no reason for it to be different that I can think of!).
+By default (on cgroups v1, with `--cgroupns=host`) Docker sets up the cgroup bind mounts to give the illusion of a private cgroup namespace.
+However, as long as the container has `CAP_SYS_ADMIN` it is possible to simply mount the cgroupfs and get read-write access to the full host's cgroups.
+
+The container case is one of the main cases I can think of where you might want multiple copies of cgroup mounts (albeit in separate mount namespaces).
+
+**Is the understanding above correct, and are there any gotchas/concerns around manipulating cgroups via multiple mount points?**
+
+
+## What's the correct way to check which controllers are enabled?
+
+It's possible for there to be no mount for a v1 controller that shows up in `/proc/$PID/cgroup` - you can see this by unmounting one of the cgroup mounts in `/sys/fs/cgroup/`.
+
+**What is it that determines which controllers are *enabled*? Is it kernel configuration applied at boot?**
+
+On cgroups v2 it seems the `/sys/fs/cgroup/cgroup.controllers` file lists the enabled controllers (although can this be modified at system runtime?).
+
+A related question is when controllers can be enabled for cgroups v1/v2 in combination:
+
+**Is it the case that there can only be *any controllers* enabled for v1 or v2 at any one time, or is it the case that *each controller* can only be enabled for v1 or v2?**
