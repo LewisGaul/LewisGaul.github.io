@@ -79,17 +79,20 @@ Inside the container you could use an entrypoint that does something like the fo
 ```bash
 #!/bin/bash
 
-# Move the host cgroups somewhere else.
-mkdir /host-cgroups
-mount --move /sys/fs/cgroup /host-cgroups
-# Create the container cgroup tmpfs.
+# Remove and recreate the container cgroup tmpfs.
+umount --recursive /sys/fs/cgroup
 mount -t tmpfs cgroup /sys/fs/cgroup
+# Set up the host cgroups somewhere else.
+mkdir /host-cgroups
+mount -t tmpfs cgroup /host-cgroups
 # For each controller bind-mount from the host cgroups.
 controllers=(memory cpu,cpuacct cpuset pids hugetlb freezer perf_event net_cls,net_prio blkio devices)
-for ctrlr in "${controllers[@]}"; do
-  mkdir "/sys/fs/cgroup/$ctrlr"
+for ctrlr in ${controllers[@]}; do
+  mkdir /host-cgroups/$ctrlr
+  mount -t cgroup cgroup /host-cgroups/$ctrlr -o rw,$ctrlr
+  mkdir /sys/fs/cgroup/$ctrlr
   cgroup_subpath=$(grep ":$ctrlr:/" /proc/1/cgroup | cut -d ':' -f 3)
-  mount --bind "/host-cgroups/$ctrlr$cgroup_subpath" "/sys/fs/cgroup/$ctrlr"
+  mount --bind /host-cgroups/$ctrlr$cgroup_subpath /sys/fs/cgroup/$ctrlr
 done
 # Clean up.
 umount --recursive /host-cgroups
