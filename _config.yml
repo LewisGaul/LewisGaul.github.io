@@ -10,6 +10,9 @@ kramdown:
 
 plugins: [jekyll-seo-tag]
 
+# Show posts with a date in the future
+future: true
+
 # Navigation
 nav:
   - name: Home
