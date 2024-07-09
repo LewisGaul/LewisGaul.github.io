@@ -2,4 +2,5 @@ _site/
 Gemfile.lock
 *cache*
 .idea/
-
+zig-out/
+.zig-cache/

@@ -1,0 +1,16 @@
+<extend template="base.html"/>
+
+<title id="title" var="$site.title"></title>
+
+<div id="main">
+  <ul loop="$page.subpages()" id="post">        
+    <li>
+      <p>
+        <a href="$loop.it.permalink()"><span var="$loop.it.title"></span></a>
+        <!-- Why can't I have a sensible date format?!! -->
+        (<span var="$page.date.format('January 02, 2006')"></span>)
+      </p>
+      <!-- <div class="excerpt">{{ post.excerpt }}</div> -->
+    </li>
+  </ul>
+</div>

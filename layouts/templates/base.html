@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title id="title"><super/></title>
+    <!-- <link href="{{ '/assets/css/main.css' | relative_url }}" rel="stylesheet" type="text/css"> -->
+  </head>
+
+  <body>    
+    <nav id="menu"> 
+      <a href="/">Home</a>
+      <a href="/blog/">Blog</a>
+      <a href="https://enhackathon.github.io">EnHackathon</a>
+    </nav>
+
+    <div id="main" class="container">
+      <super/>
+    </div>
+    <footer>
+      <div class="social">
+        <ul>
+          <li class="email"><a href="mailto:lewis.gaul@gmail.com"></a></li>
+          <li class="gh"><a href="https://github.com/LewisGaul"></a></li>
+          <li class="twitter"><a href="https://twitter.com/lewis_gaul"></a></li>
+          <li class="in"><a href="https://uk.linkedin.com/in/lewis-gaul-573a47116"></a></li>
+        </ul>
+      </div>
+      <p class="modified">
+        Site last updated: {{ site.time | date: "%d %B %Y" }}
+      </p>
+    </footer>
+  </body>
+</html>
