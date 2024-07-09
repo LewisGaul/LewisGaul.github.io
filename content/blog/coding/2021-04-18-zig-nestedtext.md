@@ -28,7 +28,7 @@ Quoting from the homepage:
 
 Snippet from the example on the homepage:
 
-```nestedtext
+```
 # Contact information for our officers
 
 president:
@@ -50,7 +50,7 @@ president:
 
 I like YAML - it succeeds in being an easy to read and write data format. Below is an example.
 
-```yaml
+```
 - first-name: Barbara
   surname: Lighthouse
   age: 10
@@ -70,7 +70,7 @@ Here we have a list containing three objects, where object keys are strings and 
 
 However, there are some really wacky gotchas in YAML. Say we wanted to add another object to the list:
 
-```yaml
+```
 - first-name: Ronnie
   surname: Omelettes
   age: 30:6  # 30 years and 6 months
@@ -124,7 +124,7 @@ NestedText was first released very recently, in October 2020, and already has ne
 
 Below is the above example converted to NestedText (this example is actually valid YAML). Note the key difference: all values are interpreted as strings ('text'), and it is up to the application consuming the data to interpret fields as specific types.
 
-```yaml
+```
 -
   first-name: Barbara
   surname: Lighthouse
