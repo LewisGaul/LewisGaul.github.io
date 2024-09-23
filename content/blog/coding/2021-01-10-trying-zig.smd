@@ -2,7 +2,7 @@
 .title = "Trying out Zig - Zigominoes",
 .date = @date("2020-07-06"),
 .author = "Lewis Gaul",
-.layout = "blog_post.html",
+.layout = "blog_post.shtml",
 .tags = ["zig", "language"],
 ---
 

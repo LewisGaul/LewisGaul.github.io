@@ -2,7 +2,7 @@
 .title = "Homepage",
 .date = @date("2020-07-06T00:00:00"),
 .author = "Lewis Gaul",
-.layout = "default.html",
+.layout = "default.shtml",
 ---
 
 # Hi there, I'm Lewis!

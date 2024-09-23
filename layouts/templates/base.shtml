@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title id="title"><super/></title>
+    <title id="title"><super></title>
     <!-- <link href="{{ '/assets/css/main.css' | relative_url }}" rel="stylesheet" type="text/css"> -->
   </head>
 
@@ -14,7 +14,7 @@
     </nav>
 
     <div id="main" class="container">
-      <super/>
+      <super>
     </div>
     <footer>
       <div class="social">

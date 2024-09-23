@@ -2,7 +2,7 @@
 .title = "Issues With Nested Python Virtual Environments",
 .date = @date("2020-07-06"),
 .author = "Lewis Gaul",
-.layout = "blog_post.html",
+.layout = "blog_post.shtml",
 .tags = ["python", "virtualenv", "venv", "tips"],
 ---
 
