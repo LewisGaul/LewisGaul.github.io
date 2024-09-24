@@ -4,7 +4,7 @@
 
 <div id="main">
   <h1 :text="$page.title"></h1>
-  <!-- <p class="tags">Tags: <div :loop=$page.tags()><span :text=$loop.it></span></div></p> -->
+  <p class="tags">Tags: <ctx :loop=$page.tags><ctx :text=$loop.it></ctx> </ctx></p>
   <div :html="$page.toc()"></div>
   <br>
   <div :html="$page.content()"></div>
