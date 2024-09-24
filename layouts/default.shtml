@@ -1,8 +1,8 @@
 <extend template="base.shtml">
 
-<title id="title" var="$site.title"></title>
+<title id="title" :text="$site.title"></title>
 
 <div id="main">
-  <h1 var="$page.title"></h1>
-  <div var="$page.content"></div>
+  <h1 :text="$page.title"></h1>
+  <div :html="$page.content()"></div>
 </div>

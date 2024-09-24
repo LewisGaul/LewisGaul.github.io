@@ -1,12 +1,12 @@
 ---
 .title = "Cgroups Questions",
-.date = @date("2020-07-06"),
+.date = @date("2022-05-20"),
 .author = "Lewis Gaul",
 .layout = "blog_post.shtml",
 .tags = ["linux", "cgroups", "questions"],
 ---
 
-This is a rough post to summarise a few open questions I have about Linux cgroups in the context of containers and running Systemd, following on from my [Cgroups Introduction post](/blog/coding/2022/05/13/cgroups-intro).
+This is a rough post to summarise a few open questions I have about Linux cgroups in the context of containers and running Systemd, following on from my [Cgroups Introduction post]($link.sibling('2022-05-13-cgroups-intro')).
 
 If anyone has any answers please get in touch!
 My contact details can be found in the bottom-right of each page.
@@ -14,7 +14,7 @@ My contact details can be found in the bottom-right of each page.
 
 ## Why are private cgroups mounted read-only in non-privileged containers?
 
-As per [Introducing the problem](/blog/coding/2022/05/13/cgroups-intro/#introducing-the-problem) in my previous post.
+As per *Introducing the problem* in my [previous post]($link.sibling('2022-05-13-cgroups-intro')).
 I assume Podman does this mainly to mirror Docker's behaviour, so the real question is why Docker has this behaviour.
 
 ```
@@ -127,7 +127,7 @@ This means that as long as the container manager allows it, the container (or mo
 
 **Are these container managers happy for the container to take ownership of the container's cgroup?**
 
-In the case where Systemd is run inside the container, surely it wants to take ownership of the the hierarchy from the point it finds itself in (as discussed in the [Systemd cgroup ownership](/blog/coding/2022/05/13/cgroups-intro/#systemd-cgroup-ownership) section of my previous post).
+In the case where Systemd is run inside the container, surely it wants to take ownership of the the hierarchy from the point it finds itself in (as discussed in the *Systemd cgroup ownership* section of my [previous post]($link.sibling('2022-05-13-cgroups-intro'))).
 Therefore, if running Systemd inside a container is considered 'valid', then surely it's also valid for a container to modify its cgroups instead of/before running Systemd?
 
 

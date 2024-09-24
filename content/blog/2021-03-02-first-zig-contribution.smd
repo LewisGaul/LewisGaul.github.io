@@ -1,6 +1,6 @@
 ---
 .title = "First Contribution To Zig",
-.date = @date("2020-07-06"),
+.date = @date("2021-03-02"),
 .author = "Lewis Gaul",
 .layout = "blog_post.shtml",
 .tags = ["zig", "open-source", "language"],
@@ -9,9 +9,10 @@
 
 Recently one of the main things I've been intending to learn more about is the Zig programming language. I came across an issue tagged with 'contributor friendly' in the issue tracker that seemed approachable and decided I might as well try diving in!
 
-<img src="/assets/img/zig-mascot-zero.svg" id="zig-zero" alt="Zig mascot Zero the Ziguana" width="200" height="200" />
+[Zig mascot Zero the Ziguana]($image.asset('zig-mascot-zero.svg'))
 
-For readers who would like a refresher on Zig I would recommend taking a look at the (recently revamped) website: <https://ziglang.org/>. Feel free to check out my [previous blog post about Zig](../../../01/10/trying-zig) too!
+For readers who would like a refresher on Zig I would recommend taking a look at the (recently revamped) website: <https://ziglang.org/>.
+Feel free to check out my [previous blog post about Zig]($link.sibling('2021-01-10-trying-zig) too!
 
 The issue that caught my interest was a recent regression in `zig fmt`, caused by a rewrite of the AST machinery that I'd been watching on streams presented by Andrew Kelley (the creator of Zig).
 

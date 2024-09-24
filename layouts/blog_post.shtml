@@ -1,13 +1,11 @@
 <extend template="base.shtml">
 
-<title id="title" var="$site.title"></title>
+<title id="title" :text="$site.title"></title>
 
 <div id="main">
-  <h1 var="$page.title"></h1>
-  <p class="tags">Tags: {{ page.tags | join: ", " }}</p>
-  <h2>Contents</h2>
-  <p>TODO: include ToC here</p>
-  <!-- {% include toc.html html=content %} -->
+  <h1 :text="$page.title"></h1>
+  <!-- <p class="tags">Tags: <div :loop=$page.tags()><span :text=$loop.it></span></div></p> -->
+  <div :html="$page.toc()"></div>
   <br>
-  <div var="$page.content"></div>
+  <div :html="$page.content()"></div>
 </div>

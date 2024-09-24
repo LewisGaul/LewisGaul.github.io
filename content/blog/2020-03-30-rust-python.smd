@@ -1,6 +1,6 @@
 ---
 .title = "Extending Python With Rust",
-.date = @date("2020-07-06"),
+.date = @date("2020-03-30"),
 .author = "Lewis Gaul",
 .layout = "blog_post.shtml",
 .tags = ["python", "rust"],

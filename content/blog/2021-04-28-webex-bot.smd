@@ -1,6 +1,6 @@
 ---
 .title = "Setting Up A Webex Bot",
-.date = @date("2020-07-06"),
+.date = @date("2021-04-28"),
 .author = "Lewis Gaul",
 .layout = "blog_post.shtml",
 .tags = ["bot", "python"],
@@ -14,7 +14,7 @@ This post contains some rough notes on setting up a basic Webex bot.
 
 The documentation for Webex bots is at <https://developer.webex.com/docs/bots>. Clicking the 'Create Bot' button you arrive at the following page (you will need to sign in/create an account).
 
-<img src="/assets/img/webex-bot-create.png" id="webex-bot-create" alt="Webex create bot page" />
+[]($image.asset('webex-bot-create.png'))
 
 Fill in this form and select 'Add Bot' at the bottom of the page. Take note of the bot access token (this allows you to control the bot's actions - don't commit to version control!).
 

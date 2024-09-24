@@ -16,7 +16,7 @@
     <div id="main" class="container">
       <super>
     </div>
-    <footer>
+    <!-- <footer>
       <div class="social">
         <ul>
           <li class="email"><a href="mailto:lewis.gaul@gmail.com"></a></li>
@@ -25,9 +25,6 @@
           <li class="in"><a href="https://uk.linkedin.com/in/lewis-gaul-573a47116"></a></li>
         </ul>
       </div>
-      <p class="modified">
-        Site last updated: {{ site.time | date: "%d %B %Y" }}
-      </p>
-    </footer>
+    </footer> -->
   </body>
 </html>

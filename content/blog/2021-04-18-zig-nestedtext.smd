@@ -1,6 +1,6 @@
 ---
 .title = "Zig NestedText Library",
-.date = @date("2020-07-06"),
+.date = @date("2021-04-18"),
 .author = "Lewis Gaul",
 .layout = "blog_post.shtml",
 .tags = ["zig", "open-source", "parser", "nestedtext"],
@@ -11,7 +11,9 @@ This post is going to be a little different to others I've written in that it's 
 
 You can find my project at <https://github.com/LewisGaul/zig-nestedtext>.
 
-I've been playing around with Zig for a few months at this point, and this is my third blog post on the subject. You can find my previous posts at [Trying out Zig - Zigominoes](../../../01/10/trying-zig) and [First Contribution To Zig](../../../03/02/first-zig-contribution). Since writing the last post I have had a total of [6 PRs merged](https://github.com/ziglang/zig/pulls?q=is%3Apr+author%3ALewisGaul+is%3Amerged) into the Zig repo, all thanks to encouragement from the core team!
+I've been playing around with Zig for a few months at this point, and this is my third blog post on the subject.
+You can find my previous posts at [Trying out Zig - Zigominoes]($link.sibling('2021-01-10-trying-zig')) and [First Contribution To Zig]($link.sibling('2021-03-02-first-zig-contribution).
+Since writing the last post I have had a total of [6 PRs merged](https://github.com/ziglang/zig/pulls?q=is%3Apr+author%3ALewisGaul+is%3Amerged) into the Zig repo, all thanks to encouragement from the core team!
 
 
 ## NestedText

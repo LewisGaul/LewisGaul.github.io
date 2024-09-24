@@ -1,6 +1,6 @@
 ---
 .title = "Setting Up WSL2 With Ubuntu 20.04",
-.date = @date("2020-07-06"),
+.date = @date("2020-09-20"),
 .author = "Lewis Gaul",
 .layout = "blog_post.shtml",
 .tags = ["linux", "ubuntu", "wsl"],

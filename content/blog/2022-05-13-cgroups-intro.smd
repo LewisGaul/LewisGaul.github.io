@@ -1,6 +1,6 @@
 ---
 .title = "Cgroups Introduction",
-.date = @date("2020-07-06"),
+.date = @date("2022-05-13"),
 .author = "Lewis Gaul",
 .layout = "blog_post.shtml",
 .tags = ["linux", "cgroups", "informational"],
