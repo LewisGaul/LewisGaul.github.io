@@ -1,7 +1,7 @@
 ---
 title: The Reality of Running Systemd in Containers
 layout: post
-categories: [coding]
+categories: [rough, coding]
 tags: [containers, systemd, cgroups, podman, docker, linux, open-source]
 ---
 
@@ -89,10 +89,3 @@ CPU(s):                  8
 There is a solution to this used in LXC, called [LXCFS](https://github.com/lxc/lxcfs), which is a filesystem based on `libfuse` that provides cgroup-aware values via files bind mounted over `/proc/`.
 It also provides a cgroupfs alternative that is more appropriate for a container, with one of the main original motivations being to support systemd containers.
 See the introduction at <https://linuxcontainers.org/lxcfs/>.
-
-
-## Linux Container Cgroup Setup
-
-
-
-
